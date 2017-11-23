@@ -1,11 +1,20 @@
 #pragma once
 
 #include "stdafx.h"
-#include "visible_game_object.h"
 
-class Entity : public VisibleGameObject {
+class Entity {
 public:
-    float hp = 0;
-    bool alive = true;
-    int angle = 0;
+    void Load(std::string filename);
+    void Draw(sf::RenderWindow& window);
+    void Update(float elapsed_time);
+    
+    float GetWidth() const;
+    float GetHeight() const;
+    sf::Rect<float> GetBoundingRect() const;
+
+    sf::RectangleShape rect;
+    sf::Texture texture;
+    sf::Sprite sprite;
+    
+    bool loaded = false;
 };
