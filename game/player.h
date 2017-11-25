@@ -8,6 +8,7 @@ public:
     Player();
     void Update(sf::Time elapsed_time);
 
-    float movement_speed = 60.f;
+    float movement_speed = 100.f;
+    float jump_impulse = 1000.f;
     bool alive = true;
 };

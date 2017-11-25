@@ -2,7 +2,7 @@
 
 Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
-    gravity(0.f, 9.8f),
+    gravity(0.f, 18.f),
     world(gravity) {
     LoadResources();
     Start();
@@ -13,7 +13,7 @@ void Game::Start() {
 
     // Box2D world
     CreateGround(world);
-    CreatePlayers(world, 10.f, 10.f);
+    CreatePlayers(world, GAME_WIDTH/2, GAME_HEIGHT - 200);
 
     // Main game loop
     while (window.isOpen()) {
@@ -30,7 +30,7 @@ void Game::Start() {
         
         // Delta time between frames
         sf::Time elapsed_time = global_clock.restart();        
-        world.Step(elapsed_time.asSeconds(), 10, 8);
+        world.Step(1.f/60.f, 10, 10);
         window.clear();
         
         // Body Iterarions
@@ -38,7 +38,7 @@ void Game::Start() {
             if (body_iter->GetType() == b2_dynamicBody) {
                 player1->rect.setPosition(SCALE * body_iter->GetPosition().x, SCALE * body_iter->GetPosition().y);
                 player1->rect.setRotation(body_iter->GetAngle() * 180/b2_pi);
-            } else {
+            } else if (body_iter->GetType() == b2_staticBody) {
                 ground.rect.setPosition(SCALE * body_iter->GetPosition().x, SCALE * body_iter->GetPosition().y);
                 ground.rect.setRotation(body_iter->GetAngle() * 180/b2_pi);
                 window.draw(ground.rect);
@@ -61,14 +61,15 @@ void Game::LoadResources() {
 
 
 void Game::CreateGround(b2World& world) {
-    ground.rect.setSize(sf::Vector2f(GAME_WIDTH, GAME_HEIGHT/17));
+    ground.rect.setSize(sf::Vector2f(GAME_WIDTH, GAME_HEIGHT/20));
     ground.rect.setPosition(0, GAME_HEIGHT - ground.rect.getLocalBounds().height);
     
     ground.bodydef.type = b2_staticBody;
-    ground.bodydef.position = b2Vec2(ground.rect.getPosition().x/SCALE, ground.rect.getPosition().y/SCALE);
-    ground.shape.SetAsBox((ground.rect.getLocalBounds().width/2)/SCALE, (ground.rect.getLocalBounds().height/2)/SCALE);
+    ground.bodydef.position.Set(ground.rect.getPosition().x/SCALE, ground.rect.getPosition().y/SCALE);
+    ground.shape.SetAsBox((ground.rect.getLocalBounds().width)/SCALE, (ground.rect.getLocalBounds().height/2)/SCALE);
     ground.fixturedef.shape = &ground.shape;
-    ground.fixturedef.density = 0.f;
+    ground.fixturedef.density = 1.f;
+    ground.fixturedef.friction = 0.1f;
 
     ground.body = world.CreateBody(&ground.bodydef);
     ground.body->CreateFixture(&ground.fixturedef);
@@ -79,8 +80,8 @@ void Game::CreateGround(b2World& world) {
 void Game::CreatePlayers(b2World& world, int x, int y) {
     player1 = new Player();
     player1->bodydef.type = b2_dynamicBody;
-    player1->bodydef.position = b2Vec2(x/SCALE, y/SCALE);
-    player1->shape.SetAsBox((x/2)/SCALE, (y/2)/SCALE);
+    player1->bodydef.position.Set(x/SCALE, y/SCALE);
+    player1->shape.SetAsBox((8/2)/SCALE, (8/2)/SCALE);
     player1->fixturedef.shape = &player1->shape;
     player1->fixturedef.density = 1.f;
 

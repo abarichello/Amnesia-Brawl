@@ -16,9 +16,10 @@ public:
     b2BodyDef bodydef;
     b2PolygonShape shape;
     b2FixtureDef fixturedef;
+
     sf::RectangleShape rect;
     sf::Texture texture;
     sf::Sprite sprite;
-    
+
     bool loaded = false;
 };
