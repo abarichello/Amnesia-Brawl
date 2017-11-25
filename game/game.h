@@ -12,7 +12,6 @@ public:
 
     void Start();
     void LoadResources();
-    void GameLoop(sf::RenderWindow& window, sf::Time elapsed_time);
 
     void CreateGround(b2World& world);
     void CreatePlayers(b2World& world, int x, int y);
@@ -20,8 +19,8 @@ public:
     sf::RenderWindow window;
     sf::Clock global_clock;
 
-    b2World world;
     b2Vec2 gravity;
+    b2World world;
 
     Player* player1;
     Obstacle ground;
