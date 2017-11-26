@@ -13,8 +13,8 @@ public:
     void Start();
     void LoadResources();
 
-    void CreateGround(b2World& world);
-    void CreatePlayers(b2World& world, int x, int y);
+    void CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY);
+    void CreatePlayers(b2World& world, Player* player, int x, int y);
 
     sf::RenderWindow window;
     sf::Clock global_clock;
@@ -23,7 +23,8 @@ public:
     b2World world;
 
     Player* player1;
-    Obstacle ground;
+    Player* player2;
+    Obstacle wall;
 
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;

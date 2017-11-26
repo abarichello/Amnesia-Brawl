@@ -11,10 +11,6 @@ Game::Game():
 void Game::Start() {
     window.setFramerateLimit(70);
 
-    // Box2D world
-    CreateGround(world);
-    CreatePlayers(world, GAME_WIDTH/2, GAME_HEIGHT - 200);
-
     // Main game loop
     while (window.isOpen()) {
         sf::Event event;
@@ -30,6 +26,7 @@ void Game::Start() {
         
         // Delta time between frames
         sf::Time elapsed_time = global_clock.restart();        
+        
         world.Step(1.f/60.f, 10, 10);
         window.clear();
         
@@ -39,16 +36,22 @@ void Game::Start() {
                 player1->rect.setPosition(SCALE * body_iter->GetPosition().x, SCALE * body_iter->GetPosition().y);
                 player1->rect.setRotation(body_iter->GetAngle() * 180/b2_pi);
             } else if (body_iter->GetType() == b2_staticBody) {
-                ground.rect.setPosition(SCALE * body_iter->GetPosition().x, SCALE * body_iter->GetPosition().y);
-                ground.rect.setRotation(body_iter->GetAngle() * 180/b2_pi);
-                window.draw(ground.rect);
+                for (auto wall : obstacle_array) {
+                    wall.rect.setPosition(SCALE * body_iter->GetPosition().x, SCALE * body_iter->GetPosition().y);
+                    wall.rect.setRotation(body_iter->GetAngle() * 180/b2_pi);
+                }
             }
         }
 
         // Update players
         for (auto player : player_array) {
-            player->Update(elapsed_time);
+            player->Update(elapsed_time, obstacle_array[0]);
             window.draw(player->rect);
+        }
+
+        // Draw walls
+        for (auto wall : obstacle_array) {
+            window.draw(wall.rect);
         }
     
         window.display();
@@ -56,37 +59,45 @@ void Game::Start() {
 }
 
 void Game::LoadResources() {
-    
-}
-
-
-void Game::CreateGround(b2World& world) {
-    ground.rect.setSize(sf::Vector2f(GAME_WIDTH, GAME_HEIGHT/20));
-    ground.rect.setPosition(0, GAME_HEIGHT - ground.rect.getLocalBounds().height);
-    
-    ground.bodydef.type = b2_staticBody;
-    ground.bodydef.position.Set(ground.rect.getPosition().x/SCALE, ground.rect.getPosition().y/SCALE);
-    ground.shape.SetAsBox((ground.rect.getLocalBounds().width)/SCALE, (ground.rect.getLocalBounds().height/2)/SCALE);
-    ground.fixturedef.shape = &ground.shape;
-    ground.fixturedef.density = 1.f;
-    ground.fixturedef.friction = 0.1f;
-
-    ground.body = world.CreateBody(&ground.bodydef);
-    ground.body->CreateFixture(&ground.fixturedef);
-
-    obstacle_array.push_back(ground);
-}
-
-void Game::CreatePlayers(b2World& world, int x, int y) {
     player1 = new Player();
-    player1->bodydef.type = b2_dynamicBody;
-    player1->bodydef.position.Set(x/SCALE, y/SCALE);
-    player1->shape.SetAsBox((8/2)/SCALE, (8/2)/SCALE);
-    player1->fixturedef.shape = &player1->shape;
-    player1->fixturedef.density = 1.f;
+    player2 = new Player();
+    CreatePlayers(world, player1, GAME_WIDTH/2, GAME_HEIGHT - 200);
+    CreatePlayers(world, player2, GAME_WIDTH/4, GAME_HEIGHT - 200);
+    CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT - wall.rect.getGlobalBounds().height/4, GAME_WIDTH, GAME_HEIGHT/20); // Ground
+    CreateWall(world, 0, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT); // Left wall
+    CreateWall(world, GAME_WIDTH - wall.rect.getLocalBounds().width/2, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT); // Right wall
+    CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT/40, GAME_WIDTH, GAME_HEIGHT/20); // Ceiling
+}
 
-    player1->body = world.CreateBody(&player1->bodydef);
-    player1->body->CreateFixture(&player1->fixturedef);
 
-    player_array.push_back(player1);
+void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY) {
+    wall.rect.setSize(sf::Vector2f(sizeX, sizeY));
+    wall.rect.setPosition(posX, posY);
+    wall.rect.setOrigin(wall.rect.getSize().x/2, wall.rect.getSize().y/2);
+    
+    wall.bodydef.type = b2_staticBody;
+    wall.bodydef.position.Set(wall.rect.getPosition().x/SCALE, wall.rect.getPosition().y/SCALE);
+    wall.shape.SetAsBox((wall.rect.getLocalBounds().width)/SCALE, (wall.rect.getLocalBounds().height)/SCALE);
+    wall.fixturedef.shape = &wall.shape;
+    wall.fixturedef.filter.categoryBits = 2;
+    wall.fixturedef.density = 0.f;
+
+    wall.body = world.CreateBody(&wall.bodydef);
+    wall.body->CreateFixture(&wall.fixturedef);
+
+    obstacle_array.push_back(wall);
+}
+
+void Game::CreatePlayers(b2World& world, Player* player, int x, int y) {
+    player->bodydef.type = b2_dynamicBody;
+    player->bodydef.position.Set(x/SCALE, y/SCALE);
+    player->shape.SetAsBox(1/SCALE, 1/SCALE);
+    player->fixturedef.shape = &player1->shape;
+    player->fixturedef.filter.categoryBits = 2;
+    player->fixturedef.density = 1.f;
+
+    player->body = world.CreateBody(&player->bodydef);
+    player->body->CreateFixture(&player->fixturedef);
+
+    player_array.push_back(player);
 }
