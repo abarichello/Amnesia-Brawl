@@ -12,23 +12,23 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 
-    body->SetAngularDamping(1);
-    // body->SetLinearVelocity(b2Vec2(0, body->GetLinearVelocity().y));
+    // body->SetAngularDamping(1);
+    body->SetLinearVelocity(b2Vec2(0, body->GetLinearVelocity().y));
 
     if (alive) {
         float move_amount = movement_speed * elapsed_time.asSeconds();
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+        if (sf::Keyboard::isKeyPressed(left)) {
             // body->ApplyForce(b2Vec2(-move_amount, 0), body->GetWorldCenter(), false);
             body->SetLinearVelocity(b2Vec2(-move_amount, body->GetLinearVelocity().y));
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+        if (sf::Keyboard::isKeyPressed(right)) {
             // body->ApplyForce(b2Vec2(move_amount, 0), body->GetWorldCenter(), false);
             body->SetLinearVelocity(b2Vec2(move_amount, body->GetLinearVelocity().y));
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+        if (sf::Keyboard::isKeyPressed(jump)) {
             if (jumps_remaining > 0) {
                 --jumps_remaining;
                 b2Vec2 vel = body->GetLinearVelocity();
@@ -38,6 +38,7 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
         }
     }
     
+    // Max speed
     if (body->GetLinearVelocity().x > max_speed) {
         body->SetLinearVelocity(b2Vec2(max_speed, body->GetLinearVelocity().y));
     }
@@ -51,6 +52,7 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
         body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -max_speed));
     }
 
+    // Jump reset
     if (rect.getGlobalBounds().intersects(ground.rect.getGlobalBounds())) {
         jumps_remaining = 1;
     }

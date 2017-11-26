@@ -15,4 +15,8 @@ public:
     std::size_t jumps_remaining = 1;
     
     bool alive = true;
+
+    sf::Keyboard::Key jump;
+    sf::Keyboard::Key left;
+    sf::Keyboard::Key right;
 };
