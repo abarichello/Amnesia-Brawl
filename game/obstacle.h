@@ -6,4 +6,6 @@
 class Obstacle : public Entity {
 public:
     Obstacle();
+
+    bool is_ground;
 };

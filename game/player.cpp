@@ -8,7 +8,11 @@ Player::Player() {
     rect.setOrigin(rect.getSize().x/2, rect.getSize().y/2);
 }
 
-void Player::Update(sf::Time elapsed_time, Obstacle ground) {
+void Player::Draw(sf::RenderWindow& window) {
+    window.draw(rect);
+}
+
+void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array) {
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 
@@ -44,15 +48,10 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
         body->SetLinearVelocity(b2Vec2(-max_speed, body->GetLinearVelocity().y));
     }
  
-    // if (body->GetLinearVelocity().y > max_speed) {
-    //     body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, max_speed));
-    // }
-    // if (body->GetLinearVelocity().y < -max_speed) {
-    //     body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -max_speed));
-    // }
-
     // Jump reset
-    if (rect.getGlobalBounds().intersects(ground.rect.getGlobalBounds())) {
-        jumps_remaining = 1;
+    for (auto obstacle : obstacle_array) {
+        if (rect.getGlobalBounds().intersects(obstacle.rect.getGlobalBounds()) && obstacle.is_ground) {
+            jumps_remaining = 1;
+        }
     }
 }
