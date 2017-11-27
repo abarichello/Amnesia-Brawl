@@ -64,10 +64,10 @@ void Game::LoadResources() {
     CreatePlayers(world, player1, GAME_WIDTH/2, GAME_HEIGHT - 200);
     CreatePlayers(world, player2, GAME_WIDTH/4, GAME_HEIGHT - 200);
 
-    CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT - wall.rect.getGlobalBounds().height/4, GAME_WIDTH, GAME_HEIGHT/20); // Ground
+    CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT/40); // Ground
     CreateWall(world, 0, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT); // Left wall
-    CreateWall(world, GAME_WIDTH - wall.rect.getLocalBounds().width/2, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT); // Right wall
-    CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT/40, GAME_WIDTH, GAME_HEIGHT/20); // Ceiling
+    CreateWall(world, GAME_WIDTH, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT); // Right wall
+    CreateWall(world, GAME_WIDTH/2, 0, GAME_WIDTH, GAME_HEIGHT/40); // Ceiling
 }
 
 void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY) {

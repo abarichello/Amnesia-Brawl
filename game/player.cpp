@@ -2,7 +2,7 @@
 #include "player.h"
 
 Player::Player() {
-    rect.setSize(sf::Vector2f(40.f, 40.f));
+    rect.setSize(sf::Vector2f(50.f, 50.f));
     rect.setPosition(GAME_WIDTH/2, GAME_HEIGHT/2);
     rect.setFillColor(sf::Color(255, 100, 100));
     rect.setOrigin(rect.getSize().x/2, rect.getSize().y/2);
@@ -31,9 +31,7 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
         if (sf::Keyboard::isKeyPressed(jump)) {
             if (jumps_remaining > 0) {
                 --jumps_remaining;
-                b2Vec2 vel = body->GetLinearVelocity();
-                vel.y = -jump_impulse * elapsed_time.asSeconds();
-                body->SetLinearVelocity(vel);
+                body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x , -jump_impulse));
             }
         }
     }
@@ -45,12 +43,13 @@ void Player::Update(sf::Time elapsed_time, Obstacle ground) {
     if (body->GetLinearVelocity().x < -max_speed) {
         body->SetLinearVelocity(b2Vec2(-max_speed, body->GetLinearVelocity().y));
     }
-    if (body->GetLinearVelocity().y > max_speed) {
-        body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, max_speed));
-    }
-    if (body->GetLinearVelocity().y < -max_speed) {
-        body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -max_speed));
-    }
+ 
+    // if (body->GetLinearVelocity().y > max_speed) {
+    //     body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, max_speed));
+    // }
+    // if (body->GetLinearVelocity().y < -max_speed) {
+    //     body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -max_speed));
+    // }
 
     // Jump reset
     if (rect.getGlobalBounds().intersects(ground.rect.getGlobalBounds())) {
