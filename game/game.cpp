@@ -11,7 +11,6 @@ Game::Game():
 
 void Game::Start() {
     window.setFramerateLimit(70);
-
     // Main game loop
     while (window.isOpen()) {
         sf::Event event;
@@ -47,6 +46,8 @@ void Game::Start() {
             wall.rect.setRotation(wall.body->GetAngle() * 180/b2_pi);
             window.draw(wall.rect);
         }
+
+        // Collision between fixtures
 
         window.display();
     }
@@ -99,16 +100,24 @@ void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, 
 }
 
 void Game::CreatePlayers(b2World& world, Player* player, int x, int y) {
+    const float density = 1;
     player->bodydef.type = b2_dynamicBody;
     player->bodydef.position.Set(x/SCALE, y/SCALE);
 
     // Width and height subtracted by one, so the rect can intersect with the ground
-    player->shape.SetAsBox((player->rect.getLocalBounds().width/2-1)/SCALE, (player->rect.getLocalBounds().width/2-1)/SCALE);
+    player->shape.SetAsBox((player->rect.getLocalBounds().width/2-2)/SCALE, (player->rect.getLocalBounds().width/2-2)/SCALE);
+    player->body = world.CreateBody(&player->bodydef);
+
+    player->shape.SetAsBox((player->rect.getLocalBounds().width/2-1)/SCALE, (player->rect.getLocalBounds().width/2-1)/SCALE); // Upper collision
+    player->body->CreateFixture(&player->shape, density);
+
+    // player->shape.SetAsBox((player->rect.getLocalBounds().width/2-1)/SCALE, (player->rect.getLocalBounds().width - player->rect.getLocalBounds().width-1/2)/SCALE); // Lower collision
+    // player->body->CreateFixture(&player->shape, density);
+
     player->fixturedef.shape = &player1->shape;
     player->fixturedef.filter.categoryBits = 2;
     player->fixturedef.density = 1.f;
 
-    player->body = world.CreateBody(&player->bodydef);
     player->body->CreateFixture(&player->fixturedef);
 
     _game_object_manager.Add(player->name, player);
