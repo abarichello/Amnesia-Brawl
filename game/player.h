@@ -18,6 +18,8 @@ public:
     
     bool alive = true;
 
+    sf::RectangleShape rectA;
+    sf::RectangleShape rectB;
     sf::Keyboard::Key jump;
     sf::Keyboard::Key left;
     sf::Keyboard::Key right;

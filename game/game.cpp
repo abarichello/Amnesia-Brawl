@@ -47,7 +47,15 @@ void Game::Start() {
             window.draw(wall.rect);
         }
 
-        // Collision between fixtures
+        // Player-Player collision
+        if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
+            player2->alive = false;
+            std::cout << "rip p2" << "\n";
+        }
+        if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
+            player1->alive = false;
+            std::cout << "rip p1" << "\n";
+        }
 
         window.display();
     }
@@ -74,8 +82,8 @@ void Game::LoadPlayer2() {
 
 void Game::LoadResources() {
     CreateWall(world, GAME_WIDTH/2, GAME_HEIGHT, GAME_WIDTH, GAME_HEIGHT/40, true); // Ground
-    CreateWall(world, 0, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT, false); // Left wall
-    CreateWall(world, GAME_WIDTH, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT, false); // Right wall
+    CreateWall(world, 0, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT, true); // Left wall
+    CreateWall(world, GAME_WIDTH, GAME_HEIGHT/2, GAME_WIDTH/40, GAME_HEIGHT, true); // Right wall
     CreateWall(world, GAME_WIDTH/2, 0, GAME_WIDTH, GAME_HEIGHT/40, false); // Ceiling
 
     CreateWall(world, GAME_WIDTH/4, GAME_HEIGHT - GAME_HEIGHT/6, GAME_WIDTH/4, GAME_HEIGHT/40, true); // Lower platform
@@ -86,14 +94,13 @@ void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, 
     wall.rect.setPosition(posX, posY);
     wall.rect.setOrigin(wall.rect.getSize().x/2, wall.rect.getSize().y/2);
     wall.is_ground = is_ground;
-
+    
     wall.bodydef.type = b2_staticBody;
     wall.bodydef.position.Set(wall.rect.getPosition().x/SCALE, wall.rect.getPosition().y/SCALE);
     wall.shape.SetAsBox(wall.rect.getLocalBounds().width/2/SCALE, wall.rect.getLocalBounds().height/2/SCALE);
     wall.fixturedef.shape = &wall.shape;
-    wall.fixturedef.filter.categoryBits = 2;
     wall.fixturedef.density = 0.f;
-
+    
     wall.body = world.CreateBody(&wall.bodydef);
     wall.body->CreateFixture(&wall.fixturedef);    
     obstacle_array.push_back(wall);
@@ -103,22 +110,11 @@ void Game::CreatePlayers(b2World& world, Player* player, int x, int y) {
     const float density = 1;
     player->bodydef.type = b2_dynamicBody;
     player->bodydef.position.Set(x/SCALE, y/SCALE);
-
-    // Width and height subtracted by one, so the rect can intersect with the ground
-    player->shape.SetAsBox((player->rect.getLocalBounds().width/2-2)/SCALE, (player->rect.getLocalBounds().width/2-2)/SCALE);
     player->body = world.CreateBody(&player->bodydef);
 
-    player->shape.SetAsBox((player->rect.getLocalBounds().width/2-1)/SCALE, (player->rect.getLocalBounds().width/2-1)/SCALE); // Upper collision
+    // Width and height subtracted by one, so the rect can intersect with the ground
+    player->shape.SetAsBox((23)/SCALE, (23)/SCALE); // Upper collision
     player->body->CreateFixture(&player->shape, density);
-
-    // player->shape.SetAsBox((player->rect.getLocalBounds().width/2-1)/SCALE, (player->rect.getLocalBounds().width - player->rect.getLocalBounds().width-1/2)/SCALE); // Lower collision
-    // player->body->CreateFixture(&player->shape, density);
-
-    player->fixturedef.shape = &player1->shape;
-    player->fixturedef.filter.categoryBits = 2;
-    player->fixturedef.density = 1.f;
-
-    player->body->CreateFixture(&player->fixturedef);
 
     _game_object_manager.Add(player->name, player);
 }
