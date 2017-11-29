@@ -7,6 +7,7 @@
 class Player : public Entity {
 public:
     Player();
+    ~Player();
     void Draw(sf::RenderWindow& window);
     void Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array);
 
@@ -17,6 +18,8 @@ public:
     std::size_t jumps_remaining = 1;
     
     bool alive = true;
+
+    sf::Clock jump_clock;
 
     sf::RectangleShape rectA;
     sf::RectangleShape rectB;

@@ -16,6 +16,10 @@ Player::Player() {
     rectB.setFillColor(sf::Color::White);
 }
 
+Player::~Player() {
+    body->GetWorld()->DestroyBody(body);
+}
+
 void Player::Draw(sf::RenderWindow& window) {
     window.draw(rect);
     window.draw(rectA);
@@ -44,7 +48,8 @@ void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array
         }
 
         if (sf::Keyboard::isKeyPressed(jump)) {
-            if (jumps_remaining > 0) {
+            if (jumps_remaining > 0 && jump_clock.getElapsedTime().asSeconds() > 0.5f) {
+                jump_clock.restart();
                 --jumps_remaining;
                 body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x , -jump_impulse));
             }

@@ -32,5 +32,7 @@ public:
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
 
+    std::vector<sf::Vector2f> spawn_locations;
+
     static GameObjectManager _game_object_manager;
 };
