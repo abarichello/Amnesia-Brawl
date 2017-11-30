@@ -53,17 +53,47 @@ void Game::Start() {
         }
 
         // Player-Player collision
-        if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
-            hud.p1_score += 1;
-            player1->jumps_remaining += 1;
-            player2->Respawn();
-            _game_object_manager.Remove(2);
-        }
-        if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
-            hud.p2_score += 1;
-            player2->jumps_remaining += 1;
-            _game_object_manager.Remove(1);
-            player1->Respawn();
+        // if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
+        //     hud.p1_score += 1;
+        //     player1->jumps_remaining += 1;
+        //     player2->Respawn();
+        //     _game_object_manager.Remove(2);
+        // }
+        // if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
+        //     hud.p2_score += 1;
+        //     player2->jumps_remaining += 1;
+        //     _game_object_manager.Remove(1);
+        //     player1->Respawn();
+        // }
+
+        std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+        while (iter != _game_object_manager._game_objects.end()) {
+            std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
+            while (iter2 != _game_object_manager._game_objects.end()) {
+                if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
+                    auto killer_number = iter->second->number;
+                    auto killed_number = iter2->second->number;
+                    switch (killer_number) {
+                        case 1:
+                            hud.p1_score += 1;
+                            break;
+                        case 2:
+                            hud.p2_score += 1;
+                            break;
+                        case 3:
+                            hud.p3_score += 1;
+                            break;
+                        case 4:
+                            hud.p4_score += 1;
+                            break;
+                    }
+                    iter->second->jumps_remaining = 1;
+                    // _game_object_manager.Remove(killed_number);
+                    iter2->second->Respawn();
+                }
+                ++iter2;
+            }
+            ++iter;
         }
 
         hud.Update();
@@ -86,6 +116,7 @@ void Game::LoadPlayers(std::size_t number_of_players) {
 }
 
 void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
+    player->number = number;
     player->jump = jump;
     player->left = left;
     player->right = right;
