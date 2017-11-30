@@ -4,6 +4,7 @@
 #include "player.h"
 #include "obstacle.h"
 #include "game_object_manager.h"
+#include "hud.h"
 
 #include <utility>
 
@@ -22,6 +23,7 @@ public:
 
     sf::RenderWindow window;
     sf::Clock global_clock;
+    HUD hud;
 
     b2Vec2 gravity;
     b2World world;

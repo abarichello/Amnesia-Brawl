@@ -17,6 +17,7 @@ public:
     float jump_impulse = 15.f;
     std::size_t jumps_remaining = 1;
     
+    std::size_t score = 0;
     bool alive = true;
 
     sf::Clock jump_clock;

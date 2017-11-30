@@ -51,17 +51,21 @@ void Game::Start() {
         // Player-Player collision
         if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
             player2->alive = false;
+            player1->score += 1;
             std::cout << "rip p2" << "\n";
             _game_object_manager.Remove("Player2");
             LoadPlayer2();
         }
         if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
             player1->alive = false;
+            player2->score += 1;
             std::cout << "rip p1" << "\n";
             _game_object_manager.Remove("Player1");
             LoadPlayer1();
         }
 
+        hud.Update(player1, player2);
+        hud.Draw(window);
         window.display();
     }
 }
@@ -69,11 +73,12 @@ void Game::Start() {
 void Game::LoadPlayer1() {
     player1 = new Player();
     player1->name = "Player1";
+    player1->rect.setFillColor(sf::Color(24, 165, 235));
     player1->jump = sf::Keyboard::Key::W;
     player1->left = sf::Keyboard::Key::A;
     player1->right = sf::Keyboard::Key::D;
     
-    int random_spawn = GenerateRandom(spawn_locations.size()-1);
+    int random_spawn = GenerateRandom(spawn_locations.size()) - 1;
     b2Vec2 spawn_pos = spawn_locations[random_spawn];
     CreatePlayer(world, player1, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
 }
@@ -81,12 +86,12 @@ void Game::LoadPlayer1() {
 void Game::LoadPlayer2() {
     player2 = new Player();
     player2->name = "Player2";
-    player2->rect.setFillColor(sf::Color::Red);
+    player2->rect.setFillColor(sf::Color(227, 46, 18));
     player2->jump = sf::Keyboard::Key::Up;
     player2->left = sf::Keyboard::Key::Left;
     player2->right = sf::Keyboard::Key::Right;
 
-    int random_spawn = GenerateRandom(spawn_locations.size()-1);
+    int random_spawn = GenerateRandom(spawn_locations.size()) - 1;
     b2Vec2 spawn_pos = spawn_locations[random_spawn];
     CreatePlayer(world, player2, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
 }
