@@ -4,12 +4,14 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
     gravity(0.f, 18.f),
     world(gravity),
-    hud(2) {
+    hud(4) {
     amnesia_blue = sf::Color(24, 165, 235);
     amnesia_red = sf::Color(227, 46, 18);
+    amnesia_dark_blue = sf::Color(0, 102, 255);
+    amnesia_dark_red = sf::Color(159, 0, 0);
 
     LoadResources();
-    LoadPlayers(2);
+    LoadPlayers(4);
 }
 
 void Game::Start() {
@@ -52,24 +54,17 @@ void Game::Start() {
 
         // Player-Player collision
         if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
-            // player2->alive = false;
             hud.p1_score += 1;
-            std::cout << "rip p2" << "\n";
-            // player2->rect.setFillColor(sf::Color(100, 100, 100));
+            player1->jumps_remaining += 1;
             player2->Respawn();
-            // _game_object_manager.Remove(2);
+            _game_object_manager.Remove(2);
         }
         if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
-            // player1->alive = false;
             hud.p2_score += 1;
-            std::cout << "rip p1" << "\n";
-            // player1->rect.setFillColor(sf::Color(100, 100, 100));
-            // _game_object_manager.Remove(1);
+            player2->jumps_remaining += 1;
+            _game_object_manager.Remove(1);
             player1->Respawn();
         }
-
-        std::cout << player1->rect.getPosition().x << "\n";
-        std::cout << player1->rect.getPosition().y << "\n";
 
         hud.Update();
         hud.Draw(window);
@@ -83,9 +78,11 @@ void Game::LoadPlayers(std::size_t number_of_players) {
     SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
     SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
     if (number_of_players == 4) {
-        
+        player3 = new Player();
+        player4 = new Player();
+        SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
+        SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
     }
-    
 }
 
 void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
@@ -99,6 +96,7 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
     CreatePlayer(world, player, GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
 }
 
+// Loads the map platforms and boundariess
 void Game::LoadResources() {
     //         World                         posX                         posY          sizeX           sizeY  ground?
     // Boundaries
@@ -113,7 +111,6 @@ void Game::LoadResources() {
     CreateWall(world,  GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Upper platform
     CreateWall(world,    GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2,  GAME_WIDTH/3, GAME_HEIGHT/40, true); // Lower right
 
-    // spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
     spawn_locations.push_back(b2Vec2(               GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6));
     spawn_locations.push_back(b2Vec2( GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));

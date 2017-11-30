@@ -36,6 +36,8 @@ public:
 
     sf::Color amnesia_blue;
     sf::Color amnesia_red;
+    sf::Color amnesia_dark_blue;
+    sf::Color amnesia_dark_red;
 
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
