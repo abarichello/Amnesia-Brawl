@@ -4,10 +4,10 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
     gravity(0.f, 18.f),
     world(gravity) {
-
+        
+    LoadResources();
     LoadPlayer1();
     LoadPlayer2();
-    LoadResources();
 }
 
 void Game::Start() {
@@ -72,7 +72,10 @@ void Game::LoadPlayer1() {
     player1->jump = sf::Keyboard::Key::W;
     player1->left = sf::Keyboard::Key::A;
     player1->right = sf::Keyboard::Key::D;
-    CreatePlayers(world, player1, GAME_WIDTH/2, GAME_HEIGHT - 200);
+    
+    int random_spawn = GenerateRandom(spawn_locations.size()-1);
+    b2Vec2 spawn_pos = spawn_locations[random_spawn];
+    CreatePlayer(world, player1, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
 }
 
 void Game::LoadPlayer2() {
@@ -82,7 +85,10 @@ void Game::LoadPlayer2() {
     player2->jump = sf::Keyboard::Key::Up;
     player2->left = sf::Keyboard::Key::Left;
     player2->right = sf::Keyboard::Key::Right;
-    CreatePlayers(world, player2, GAME_WIDTH/4, GAME_HEIGHT - 200);
+
+    int random_spawn = GenerateRandom(spawn_locations.size()-1);
+    b2Vec2 spawn_pos = spawn_locations[random_spawn];
+    CreatePlayer(world, player2, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
 }
 
 void Game::LoadResources() {
@@ -96,7 +102,14 @@ void Game::LoadResources() {
     // Platforms
     CreateWall(world,                 GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6,  GAME_WIDTH/4, GAME_HEIGHT/40, true); // Lower left
     CreateWall(world,   GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3,  GAME_WIDTH/9, GAME_HEIGHT/35, true); // Lower right
-    CreateWall(world,  GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Lower right platform
+    CreateWall(world,  GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Upper platform
+    CreateWall(world,    GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2,  GAME_WIDTH/3, GAME_HEIGHT/40, true); // Lower right
+
+    // spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
+    spawn_locations.push_back(b2Vec2(               GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6));
+    spawn_locations.push_back(b2Vec2( GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3));
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
+    spawn_locations.push_back(b2Vec2(  GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2));
 }
 
 void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
@@ -116,7 +129,11 @@ void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, 
     obstacle_array.push_back(wall);
 }
 
-void Game::CreatePlayers(b2World& world, Player* player, int x, int y) {
+void Game::CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
+    
+}
+
+void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     const float density = 1;
     player->bodydef.type = b2_dynamicBody;
     player->bodydef.position.Set(x/SCALE, y/SCALE);

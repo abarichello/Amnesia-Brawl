@@ -17,7 +17,8 @@ public:
     void LoadResources();
 
     void CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground);
-    void CreatePlayers(b2World& world, Player* player, int x, int y);
+    void CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground);
+    void CreatePlayer(b2World& world, Player* player, int x, int y);
 
     sf::RenderWindow window;
     sf::Clock global_clock;
@@ -32,7 +33,7 @@ public:
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
 
-    std::vector<sf::Vector2f> spawn_locations;
+    std::vector<b2Vec2> spawn_locations;
 
     static GameObjectManager _game_object_manager;
 };
