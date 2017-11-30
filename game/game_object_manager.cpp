@@ -9,24 +9,24 @@ GameObjectManager::~GameObjectManager() {
         GameObjectDeallocator());
 }
 
-void GameObjectManager::Add(std::string name, Player* game_object) {
+void GameObjectManager::Add(std::size_t number, Player* game_object) {
     _game_objects.insert(
-        std::pair<std::string, Player*>(name, game_object)
+        std::pair<std::size_t, Player*>(number, game_object)
     );
 }
 
-void GameObjectManager::Remove(std::string name) {
-    std::map<std::string, Player*>::iterator results =
-        _game_objects.find(name);
+void GameObjectManager::Remove(std::size_t number) {
+    std::map<std::size_t, Player*>::iterator results =
+        _game_objects.find(number);
     if (results != _game_objects.end()) {
         delete results->second;
         _game_objects.erase(results);
     }
 }
 
-Player* GameObjectManager::Get(std::string name) const {
-    std::map<std::string, Player*>::const_iterator results =
-        _game_objects.find(name);
+Player* GameObjectManager::Get(std::size_t number) const {
+    std::map<std::size_t, Player*>::const_iterator results =
+        _game_objects.find(number);
     if (results == _game_objects.end()) {
         return NULL;
     }
@@ -38,7 +38,7 @@ int GameObjectManager::GetObjectCount() const {
 }
 
 void GameObjectManager::DrawAll(sf::RenderWindow& render_window) {
-    std::map<std::string, Player*>::const_iterator itr =
+    std::map<std::size_t, Player*>::const_iterator itr =
         _game_objects.begin();
     while (itr != _game_objects.end()) {
         itr->second->Draw(render_window);

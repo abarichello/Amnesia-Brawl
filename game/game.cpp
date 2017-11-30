@@ -3,11 +3,13 @@
 Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
     gravity(0.f, 18.f),
-    world(gravity) {
-        
+    world(gravity),
+    hud(2) {
+    amnesia_blue = sf::Color(24, 165, 235);
+    amnesia_red = sf::Color(227, 46, 18);
+
     LoadResources();
-    LoadPlayer1();
-    LoadPlayer2();
+    LoadPlayers(2);
 }
 
 void Game::Start() {
@@ -32,7 +34,7 @@ void Game::Start() {
         window.clear();
 
         // Update players
-        std::map<std::string, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
+        std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
         while (itr != _game_object_manager._game_objects.end()) {
             itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
             itr->second->rect.setRotation(itr->second->body->GetAngle() * 180/b2_pi);
@@ -50,50 +52,51 @@ void Game::Start() {
 
         // Player-Player collision
         if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
-            player2->alive = false;
-            player1->score += 1;
+            // player2->alive = false;
+            hud.p1_score += 1;
             std::cout << "rip p2" << "\n";
-            _game_object_manager.Remove("Player2");
-            LoadPlayer2();
+            // player2->rect.setFillColor(sf::Color(100, 100, 100));
+            player2->Respawn();
+            // _game_object_manager.Remove(2);
         }
         if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
-            player1->alive = false;
-            player2->score += 1;
+            // player1->alive = false;
+            hud.p2_score += 1;
             std::cout << "rip p1" << "\n";
-            _game_object_manager.Remove("Player1");
-            LoadPlayer1();
+            // player1->rect.setFillColor(sf::Color(100, 100, 100));
+            // _game_object_manager.Remove(1);
+            player1->Respawn();
         }
 
-        hud.Update(player1, player2);
+        std::cout << player1->rect.getPosition().x << "\n";
+        std::cout << player1->rect.getPosition().y << "\n";
+
+        hud.Update();
         hud.Draw(window);
         window.display();
     }
 }
 
-void Game::LoadPlayer1() {
+void Game::LoadPlayers(std::size_t number_of_players) {
     player1 = new Player();
-    player1->name = "Player1";
-    player1->rect.setFillColor(sf::Color(24, 165, 235));
-    player1->jump = sf::Keyboard::Key::W;
-    player1->left = sf::Keyboard::Key::A;
-    player1->right = sf::Keyboard::Key::D;
+    player2 = new Player();
+    SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
+    SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
+    if (number_of_players == 4) {
+        
+    }
     
-    int random_spawn = GenerateRandom(spawn_locations.size()) - 1;
-    b2Vec2 spawn_pos = spawn_locations[random_spawn];
-    CreatePlayer(world, player1, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
 }
 
-void Game::LoadPlayer2() {
-    player2 = new Player();
-    player2->name = "Player2";
-    player2->rect.setFillColor(sf::Color(227, 46, 18));
-    player2->jump = sf::Keyboard::Key::Up;
-    player2->left = sf::Keyboard::Key::Left;
-    player2->right = sf::Keyboard::Key::Right;
+void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
+    player->jump = jump;
+    player->left = left;
+    player->right = right;
+    player->rect.setFillColor(color);
 
-    int random_spawn = GenerateRandom(spawn_locations.size()) - 1;
+    int random_spawn = GenerateRandom(spawn_locations.size() - 1);
     b2Vec2 spawn_pos = spawn_locations[random_spawn];
-    CreatePlayer(world, player2, spawn_pos.x + GenerateRandom(50), spawn_pos.y - GenerateRandom(25) - 10);
+    CreatePlayer(world, player, GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
 }
 
 void Game::LoadResources() {
@@ -148,7 +151,7 @@ void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     player->shape.SetAsBox((23)/SCALE, (23)/SCALE); // Upper collision
     player->body->CreateFixture(&player->shape, density);
 
-    _game_object_manager.Add(player->name, player);
+    _game_object_manager.Add(player->number, player);
 }
 
 GameObjectManager Game::_game_object_manager;

@@ -5,13 +5,19 @@
 
 class HUD {
 public:
-    HUD();
-
-    void Update(Player* p1, Player* p2);
+    HUD(std::size_t number_of_players);
+    void Update();
     void Draw(sf::RenderWindow& window);
+    std::vector<sf::Text> score_array;
+
+    std::size_t number_of_players;
+    std::size_t p1_score;
+    std::size_t p2_score;
+    std::size_t p3_score;
+    std::size_t p4_score;
 
 private:
     sf::Font hud_font;
-    sf::Text p1_score;
-    sf::Text p2_score;
+    sf::Text score;
+
 };

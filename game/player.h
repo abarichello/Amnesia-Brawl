@@ -10,14 +10,14 @@ public:
     ~Player();
     void Draw(sf::RenderWindow& window);
     void Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array);
+    void Respawn();
 
-    std::string name;
+    std::size_t number;
     float movement_speed = 1000.f;
     float max_speed = 10.f;
     float jump_impulse = 15.f;
     std::size_t jumps_remaining = 1;
     
-    std::size_t score = 0;
     bool alive = true;
 
     sf::Clock jump_clock;

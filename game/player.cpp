@@ -26,6 +26,10 @@ void Player::Draw(sf::RenderWindow& window) {
     window.draw(rectB);
 }
 
+void Player::Respawn() {
+    body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH)/SCALE, GenerateRandom(GAME_HEIGHT)/SCALE), 0);
+}
+
 void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array) {
     rectA.setPosition(rect.getPosition().x, rect.getPosition().y - rect.getLocalBounds().height/2 + 1); // Upper collision
     rectB.setPosition(rect.getPosition().x, rect.getPosition().y + rect.getLocalBounds().height/2 - 1); // Lower collision
