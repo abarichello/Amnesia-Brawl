@@ -26,12 +26,30 @@ HUD::HUD(std::size_t number_of_players) {
         score_array[2].setPosition(score.getLocalBounds().width/2, score.getLocalBounds().height/2);
         score_array[3].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5/2, score.getLocalBounds().height/2);
     }
+
+    match_clock.setFont(hud_font);
+    match_clock.setOutlineColor(sf::Color(100, 100, 100));
+    match_clock.setOutlineThickness(1);
+    match_clock.setCharacterSize(25);
+    match_clock.setString("0:00");
+    match_clock.setPosition(GAME_WIDTH/2 - match_clock.getLocalBounds().width/2, match_clock.getLocalBounds().height);
 }
 
-void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter) {
+void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float countdown) {
     for (auto i = 0u; i < number_of_players; ++i) {
         score_array[i].setString(std::to_string(iter->second->score));
         ++iter;
+    }
+    auto minutes = std::to_string((int)countdown / 60);
+    auto seconds = std::to_string((int)countdown % 60);
+    if (std::stoi(seconds) < 10) {
+        seconds = "0" + seconds;
+    }
+
+    if (countdown < 0) {
+        match_clock.setString("-END-");    
+    } else {
+        match_clock.setString(minutes + ":" + seconds);
     }
 }
 
@@ -39,4 +57,5 @@ void HUD::Draw(sf::RenderWindow& window) {
     for (auto score : score_array) {
         window.draw(score);
     }
+    window.draw(match_clock);
 }

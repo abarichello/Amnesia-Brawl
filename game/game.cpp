@@ -17,6 +17,8 @@ Game::Game():
 
 void Game::Start() {
     window.setFramerateLimit(70);
+    float countdown = 1.f;
+
     // Main game loop
     while (window.isOpen()) {
         sf::Event event;
@@ -32,6 +34,7 @@ void Game::Start() {
 
         // Delta time between frames
         sf::Time elapsed_time = global_clock.restart();
+        countdown -= elapsed_time.asSeconds();
 
         world.Step(1.f/60.f, 10, 10);
         window.clear();
@@ -83,7 +86,7 @@ void Game::Start() {
         }
 
         iter = _game_object_manager._game_objects.begin();
-        hud.Update(iter);
+        hud.Update(iter, countdown);
         hud.Draw(window);
         window.display();
     }

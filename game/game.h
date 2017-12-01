@@ -23,6 +23,7 @@ public:
 
     sf::RenderWindow window;
     sf::Clock global_clock;
+    sf::Text match_clock;
     
     b2Vec2 gravity;
     b2World world;
