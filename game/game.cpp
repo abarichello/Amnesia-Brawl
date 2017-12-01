@@ -4,7 +4,8 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
     gravity(0.f, 18.f),
     world(gravity),
-    hud(4) {
+    hud(4),
+    powerup(world) {
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -44,7 +45,7 @@ void Game::Start() {
         std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
         while (itr != _game_object_manager._game_objects.end()) {
             itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
-            itr->second->rect.setRotation(itr->second->body->GetAngle() * 180/b2_pi);
+            itr->second->rect.setRotation(itr->second->body->GetAngle() * 180 / b2_pi);
             itr->second->Update(elapsed_time, obstacle_array);
             itr->second->Draw(window);
             itr++;
@@ -85,6 +86,7 @@ void Game::Start() {
 
         // Powerup drawing
         for (auto powerup : powerup_array) {
+            powerup.Update(elapsed_time);
             powerup.Draw(window);
             if (!powerup.alive) {
                 powerup_array.pop_back();
@@ -102,13 +104,18 @@ void Game::Start() {
                         
                             break;
                         case 2:
-                            iter->second->max_speed = 30.f;
-                            iter2->alive = false;
+                            powerup.Speed(iter);
+                            iter->second->powered_up = true;
                             break;
-                            case 3:
+                        case 3:
                             
                             break;
+                        case 4:
+                            powerup.Floaty(iter);
+                            iter->second->powered_up = true;
+                            break;
                     }
+                    iter2->alive = false;
                 }
                 ++iter2;
             }
@@ -196,7 +203,7 @@ void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     player->body = world.CreateBody(&player->bodydef);
 
     // Width and height subtracted by one, so the rect can intersect with the ground
-    player->shape.SetAsBox(23 / SCALE, 23 / SCALE); // Upper collision
+    player->shape.SetAsBox(23 / SCALE, 23 / SCALE); // Main player body
     player->body->CreateFixture(&player->shape, density);
 
     _game_object_manager.Add(player->number, player);
@@ -205,7 +212,9 @@ void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
 void Game::ResetPowerups() {
     std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
-        iter->second->max_speed = 10.f;
+        if (iter->second->powered_up) {
+            powerup.ResetPowerupEffects(iter);
+        }
         ++iter;
     }
 }

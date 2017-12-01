@@ -18,7 +18,8 @@ public:
     float max_speed = 10.f;
     float jump_impulse = 15.f;
     std::size_t jumps_remaining = 1;
-    
+
+    bool powered_up = false;
     bool alive = true;
 
     sf::Clock jump_clock;

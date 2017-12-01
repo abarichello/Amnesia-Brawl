@@ -33,7 +33,7 @@ void Player::Respawn() {
 void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array) {
     rectA.setPosition(rect.getPosition().x, rect.getPosition().y - rect.getLocalBounds().height/2 + 1); // Upper collision
     rectB.setPosition(rect.getPosition().x, rect.getPosition().y + rect.getLocalBounds().height/2 - 1); // Lower collision
-    
+
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 
@@ -59,7 +59,7 @@ void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array
             }
         }
     }
-    
+
     // Max speed
     if (body->GetLinearVelocity().x > max_speed) {
         body->SetLinearVelocity(b2Vec2(max_speed, body->GetLinearVelocity().y));
@@ -67,7 +67,7 @@ void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array
     if (body->GetLinearVelocity().x < -max_speed) {
         body->SetLinearVelocity(b2Vec2(-max_speed, body->GetLinearVelocity().y));
     }
- 
+
     // Jump reset
     for (auto obstacle : obstacle_array) {
         if (rectB.getGlobalBounds().intersects(obstacle.rect.getGlobalBounds()) && obstacle.is_ground) {

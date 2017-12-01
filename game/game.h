@@ -48,7 +48,6 @@ public:
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
     std::vector<PowerUp> powerup_array;
-
     
     // std::vector<b2Vec2> spawn_locations;
 
