@@ -5,10 +5,11 @@ Game::Game():
     gravity(0.f, 18.f),
     world(gravity),
     hud(4) {
-    amnesia_blue = sf::Color(24, 165, 235);
-    amnesia_red = sf::Color(227, 46, 18);
-    amnesia_dark_blue = sf::Color(0, 102, 255);
-    amnesia_dark_red = sf::Color(159, 0, 0);
+
+    amnesia_blue = sf::Color(14, 77, 203);
+    amnesia_red = sf::Color(227, 12, 18);
+    amnesia_dark_blue = sf::Color(29, 12, 137);
+    amnesia_dark_red = sf::Color(158, 0, 0);
 
     LoadResources();
     LoadPlayers(4);
@@ -71,22 +72,7 @@ void Game::Start() {
             std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
             while (iter2 != _game_object_manager._game_objects.end()) {
                 if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
-                    auto killer_number = iter->second->number;
-                    auto killed_number = iter2->second->number;
-                    switch (killer_number) {
-                        case 1:
-                            hud.p1_score += 1;
-                            break;
-                        case 2:
-                            hud.p2_score += 1;
-                            break;
-                        case 3:
-                            hud.p3_score += 1;
-                            break;
-                        case 4:
-                            hud.p4_score += 1;
-                            break;
-                    }
+                    iter->second->score += 1;
                     iter->second->jumps_remaining = 1;
                     // _game_object_manager.Remove(killed_number);
                     iter2->second->Respawn();
@@ -96,7 +82,8 @@ void Game::Start() {
             ++iter;
         }
 
-        hud.Update();
+        iter = _game_object_manager._game_objects.begin();
+        hud.Update(iter);
         hud.Draw(window);
         window.display();
     }
@@ -122,8 +109,8 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
     player->right = right;
     player->rect.setFillColor(color);
 
-    int random_spawn = GenerateRandom(spawn_locations.size() - 1);
-    b2Vec2 spawn_pos = spawn_locations[random_spawn];
+    // int random_spawn = GenerateRandom(spawn_locations.size() - 1);
+    // b2Vec2 spawn_pos = spawn_locations[random_spawn];
     CreatePlayer(world, player, GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
 }
 

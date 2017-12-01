@@ -27,13 +27,13 @@ public:
     b2Vec2 gravity;
     b2World world;
     HUD hud;
-
+    
     Player* player1;
     Player* player2;
     Player* player3;
     Player* player4;
     Obstacle wall;
-
+    
     sf::Color amnesia_blue;
     sf::Color amnesia_red;
     sf::Color amnesia_dark_blue;
