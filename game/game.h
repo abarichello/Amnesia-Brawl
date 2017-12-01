@@ -5,6 +5,7 @@
 #include "obstacle.h"
 #include "game_object_manager.h"
 #include "hud.h"
+#include "powerup.h"
 
 #include <utility>
 
@@ -21,8 +22,11 @@ public:
     void CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
+    void ResetPowerups();
+
     sf::RenderWindow window;
     sf::Clock global_clock;
+    sf::Clock powerup_clock;
     sf::Text match_clock;
     
     b2Vec2 gravity;
@@ -34,6 +38,7 @@ public:
     Player* player3;
     Player* player4;
     Obstacle wall;
+    PowerUp powerup;
     
     sf::Color amnesia_blue;
     sf::Color amnesia_red;
@@ -42,8 +47,10 @@ public:
 
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
+    std::vector<PowerUp> powerup_array;
 
-    std::vector<b2Vec2> spawn_locations;
+    
+    // std::vector<b2Vec2> spawn_locations;
 
     static GameObjectManager _game_object_manager;
 };

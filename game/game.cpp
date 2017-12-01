@@ -17,7 +17,8 @@ Game::Game():
 
 void Game::Start() {
     window.setFramerateLimit(70);
-    float countdown = 1.f;
+    float countdown = 180.f;
+    powerup_clock.restart();
 
     // Main game loop
     while (window.isOpen()) {
@@ -52,24 +53,11 @@ void Game::Start() {
         // Update walls
         for (auto wall : obstacle_array) {
             wall.rect.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
-            wall.rect.setRotation(wall.body->GetAngle() * 180/b2_pi);
+            wall.rect.setRotation(wall.body->GetAngle() * 180 / b2_pi);
             window.draw(wall.rect);
         }
 
         // Player-Player collision
-        // if (player1->rectB.getGlobalBounds().intersects(player2->rectA.getGlobalBounds()) && player1->alive) {
-        //     hud.p1_score += 1;
-        //     player1->jumps_remaining += 1;
-        //     player2->Respawn();
-        //     _game_object_manager.Remove(2);
-        // }
-        // if (player2->rectB.getGlobalBounds().intersects(player1->rectA.getGlobalBounds()) && player2->alive) {
-        //     hud.p2_score += 1;
-        //     player2->jumps_remaining += 1;
-        //     _game_object_manager.Remove(1);
-        //     player1->Respawn();
-        // }
-
         std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
         while (iter != _game_object_manager._game_objects.end()) {
             std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
@@ -79,6 +67,48 @@ void Game::Start() {
                     iter->second->jumps_remaining = 1;
                     // _game_object_manager.Remove(killed_number);
                     iter2->second->Respawn();
+                }
+                ++iter2;
+            }
+            ++iter;
+        }
+        
+        // Powerup generation
+        if (powerup_clock.getElapsedTime().asSeconds() > 4.f && powerup_array.size() < 1) {
+            powerup_clock.restart();
+            powerup.rect.setPosition(GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
+            powerup_array.push_back(powerup);
+            ResetPowerups();
+        } else if (powerup_array.size() == 1) {
+            powerup_clock.restart();
+        }
+
+        // Powerup drawing
+        for (auto powerup : powerup_array) {
+            powerup.Draw(window);
+            if (!powerup.alive) {
+                powerup_array.pop_back();
+            }
+        }
+        
+        // Powerup collision
+        iter = _game_object_manager._game_objects.begin();
+        while (iter != _game_object_manager._game_objects.end()) {
+            std::vector<PowerUp>::iterator iter2 = powerup_array.begin();
+            while (iter2 != powerup_array.end()) {
+                if (iter->second->rect.getGlobalBounds().intersects(iter2->rect.getGlobalBounds())) {
+                    switch (iter2->effect) {
+                        case 1:
+                        
+                            break;
+                        case 2:
+                            iter->second->max_speed = 30.f;
+                            iter2->alive = false;
+                            break;
+                            case 3:
+                            
+                            break;
+                    }
                 }
                 ++iter2;
             }
@@ -132,23 +162,23 @@ void Game::LoadResources() {
     CreateWall(world,  GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Upper platform
     CreateWall(world,    GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2,  GAME_WIDTH/3, GAME_HEIGHT/40, true); // Lower right
 
-    spawn_locations.push_back(b2Vec2(               GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6));
-    spawn_locations.push_back(b2Vec2( GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3));
-    spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
-    spawn_locations.push_back(b2Vec2(  GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2));
+    // spawn_locations.push_back(b2Vec2(               GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6));
+    // spawn_locations.push_back(b2Vec2( GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3));
+    // spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
+    // spawn_locations.push_back(b2Vec2(  GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2));
 }
 
 void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
     wall.rect.setSize(sf::Vector2f(sizeX, sizeY));
     wall.rect.setPosition(posX, posY);
-    wall.rect.setOrigin(wall.rect.getSize().x/2, wall.rect.getSize().y/2);
+    wall.rect.setOrigin(wall.rect.getSize().x / 2, wall.rect.getSize().y / 2);
     wall.is_ground = is_ground;
 
     wall.bodydef.type = b2_staticBody;
-    wall.bodydef.position.Set(wall.rect.getPosition().x/SCALE, wall.rect.getPosition().y/SCALE);
+    wall.bodydef.position.Set(wall.rect.getPosition().x / SCALE, wall.rect.getPosition().y / SCALE);
     wall.fixturedef.shape = &wall.shape;
     wall.fixturedef.density = 0.f;
-    wall.shape.SetAsBox(wall.rect.getLocalBounds().width/2/SCALE, wall.rect.getLocalBounds().height/2/SCALE);
+    wall.shape.SetAsBox(wall.rect.getLocalBounds().width / 2 / SCALE, wall.rect.getLocalBounds().height / 2 / SCALE);
 
     wall.body = world.CreateBody(&wall.bodydef);
     wall.body->CreateFixture(&wall.fixturedef);
@@ -162,14 +192,22 @@ void Game::CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     const float density = 1;
     player->bodydef.type = b2_dynamicBody;
-    player->bodydef.position.Set(x/SCALE, y/SCALE);
+    player->bodydef.position.Set(x / SCALE, y / SCALE);
     player->body = world.CreateBody(&player->bodydef);
 
     // Width and height subtracted by one, so the rect can intersect with the ground
-    player->shape.SetAsBox((23)/SCALE, (23)/SCALE); // Upper collision
+    player->shape.SetAsBox(23 / SCALE, 23 / SCALE); // Upper collision
     player->body->CreateFixture(&player->shape, density);
 
     _game_object_manager.Add(player->number, player);
+}
+
+void Game::ResetPowerups() {
+    std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+    while (iter != _game_object_manager._game_objects.end()) {
+        iter->second->max_speed = 10.f;
+        ++iter;
+    }
 }
 
 GameObjectManager Game::_game_object_manager;
