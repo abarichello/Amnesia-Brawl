@@ -3,16 +3,16 @@
 
 Player::Player() {
     rect.setSize(sf::Vector2f(48.f, 48.f));
-    rect.setPosition(GAME_WIDTH/2, GAME_HEIGHT/2);
+    rect.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 2);
     rect.setFillColor(sf::Color(255, 100, 100));
-    rect.setOrigin(rect.getSize().x/2, rect.getSize().y/2);
+    rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
 
-    rectA.setSize(sf::Vector2f(30.f, 4.f));
-    rectA.setOrigin(rectA.getLocalBounds().width/2, rectA.getLocalBounds().height/2);
+    rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
+    rectA.setOrigin(rectA.getLocalBounds().width / 2, rectA.getLocalBounds().height / 2);
     rectA.setFillColor(sf::Color::White);
 
-    rectB.setSize(sf::Vector2f(30.f, 4.f));
-    rectB.setOrigin(rectB.getLocalBounds().width/2, rectB.getLocalBounds().height/2);
+    rectB.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
+    rectB.setOrigin(rectB.getLocalBounds().width / 2, rectB.getLocalBounds().height / 2);
     rectB.setFillColor(sf::Color::White);
 }
 
@@ -27,7 +27,7 @@ void Player::Draw(sf::RenderWindow& window) {
 }
 
 void Player::Respawn() {
-    body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH)/SCALE, GenerateRandom(GAME_HEIGHT)/SCALE), 0);
+    body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH) / SCALE, GenerateRandom(GAME_HEIGHT) / SCALE), 0);
 }
 
 void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array) {

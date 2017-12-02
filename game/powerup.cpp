@@ -56,7 +56,7 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     auto color = iter->second->rect.getFillColor();
     color.a = 255;
     iter->second->rect.setFillColor(color);
-    iter->second->rectA.setSize(sf::Vector2f(30, 4));
+    iter->second->rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
 }
 
 void PowerUp::Update(float countdown) {

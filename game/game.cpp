@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game():
-    window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
+    window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL"),
     gravity(0.f, 18.f),
     world(gravity),
     hud(4) {
@@ -11,6 +11,7 @@ Game::Game():
     amnesia_dark_blue = sf::Color(29, 12, 137);
     amnesia_dark_red = sf::Color(158, 0, 0);
 
+    map = new Map(1, world, obstacle_array);
     LoadResources();
     LoadPlayers(4);
 }
@@ -65,7 +66,6 @@ void Game::Start() {
                 if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
                     iter->second->score += 1;
                     iter->second->jumps_remaining = 1;
-                    // _game_object_manager.Remove(killed_number);
                     iter2->second->Respawn();
                 }
                 ++iter2;
@@ -125,6 +125,7 @@ void Game::Start() {
             ++iter;
         }
 
+        // HUD Updates
         iter = _game_object_manager._game_objects.begin();
         hud.Update(iter, countdown);
         hud.Draw(window);
@@ -151,52 +152,12 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
     player->left = left;
     player->right = right;
     player->rect.setFillColor(color);
-
-    // int random_spawn = GenerateRandom(spawn_locations.size() - 1);
-    // b2Vec2 spawn_pos = spawn_locations[random_spawn];
     CreatePlayer(world, player, GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
 }
 
-// Loads the map platforms and boundariess
+// Load game sprites
 void Game::LoadResources() {
-    //         World                         posX                         posY          sizeX           sizeY  ground?
-    // Boundaries
-    CreateWall(world,                 GAME_WIDTH/2,                   GAME_HEIGHT,    GAME_WIDTH, GAME_HEIGHT/40, true); // Ground
-    CreateWall(world,                            0,                 GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT, true); // Left wall
-    CreateWall(world,                   GAME_WIDTH,                 GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT, true); // Right wall
-    CreateWall(world,                 GAME_WIDTH/2,                             0,    GAME_WIDTH, GAME_HEIGHT/40, false); // Ceiling
-
-    // Platforms
-    CreateWall(world,                 GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6,  GAME_WIDTH/4, GAME_HEIGHT/40, true); // Lower left
-    CreateWall(world,   GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3,  GAME_WIDTH/9, GAME_HEIGHT/35, true); // Lower right
-    CreateWall(world,  GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Upper platform
-    CreateWall(world,    GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2,  GAME_WIDTH/3, GAME_HEIGHT/40, true); // Lower right
-
-    // spawn_locations.push_back(b2Vec2(               GAME_WIDTH/4,   GAME_HEIGHT - GAME_HEIGHT/6));
-    // spawn_locations.push_back(b2Vec2( GAME_WIDTH - GAME_WIDTH/20,   GAME_HEIGHT - GAME_HEIGHT/3));
-    // spawn_locations.push_back(b2Vec2(GAME_WIDTH/2 - GAME_WIDTH/3, GAME_HEIGHT/2 - GAME_HEIGHT/4));
-    // spawn_locations.push_back(b2Vec2(  GAME_WIDTH - GAME_WIDTH/2,                 GAME_HEIGHT/2));
-}
-
-void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
-    wall.rect.setSize(sf::Vector2f(sizeX, sizeY));
-    wall.rect.setPosition(posX, posY);
-    wall.rect.setOrigin(wall.rect.getSize().x / 2, wall.rect.getSize().y / 2);
-    wall.is_ground = is_ground;
-
-    wall.bodydef.type = b2_staticBody;
-    wall.bodydef.position.Set(wall.rect.getPosition().x / SCALE, wall.rect.getPosition().y / SCALE);
-    wall.fixturedef.shape = &wall.shape;
-    wall.fixturedef.density = 0.f;
-    wall.shape.SetAsBox(wall.rect.getLocalBounds().width / 2 / SCALE, wall.rect.getLocalBounds().height / 2 / SCALE);
-
-    wall.body = world.CreateBody(&wall.bodydef);
-    wall.body->CreateFixture(&wall.fixturedef);
-    obstacle_array.push_back(wall);
-}
-
-void Game::CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
-
+    // TODO
 }
 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
