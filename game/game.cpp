@@ -4,8 +4,7 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA GAME"),
     gravity(0.f, 18.f),
     world(gravity),
-    hud(4),
-    powerup(world) {
+    hud(4) {
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -73,11 +72,12 @@ void Game::Start() {
             }
             ++iter;
         }
-        
+
         // Powerup generation
         if (powerup_clock.getElapsedTime().asSeconds() > 4.f && powerup_array.size() < 1) {
             powerup_clock.restart();
-            powerup.rect.setPosition(GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
+            PowerUp powerup;
+            powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
             powerup_array.push_back(powerup);
             ResetPowerups();
         } else if (powerup_array.size() == 1) {
@@ -86,29 +86,32 @@ void Game::Start() {
 
         // Powerup drawing
         for (auto powerup : powerup_array) {
-            powerup.Update(elapsed_time);
+            powerup.Update(countdown);
             powerup.Draw(window);
             if (!powerup.alive) {
                 powerup_array.pop_back();
             }
         }
-        
+
         // Powerup collision
         iter = _game_object_manager._game_objects.begin();
         while (iter != _game_object_manager._game_objects.end()) {
             std::vector<PowerUp>::iterator iter2 = powerup_array.begin();
             while (iter2 != powerup_array.end()) {
                 if (iter->second->rect.getGlobalBounds().intersects(iter2->rect.getGlobalBounds())) {
+                    auto powerup = powerup_array[0];
                     switch (iter2->effect) {
                         case 1:
-                        
+                            powerup.Invisibility(iter);
+                            iter->second->powered_up = true;
                             break;
                         case 2:
                             powerup.Speed(iter);
                             iter->second->powered_up = true;
                             break;
                         case 3:
-                            
+                            powerup.Immunity(iter);
+                            iter->second->powered_up = true;
                             break;
                         case 4:
                             powerup.Floaty(iter);
@@ -193,7 +196,7 @@ void Game::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, 
 }
 
 void Game::CreateBall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground) {
-    
+
 }
 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
@@ -213,7 +216,8 @@ void Game::ResetPowerups() {
     std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
         if (iter->second->powered_up) {
-            powerup.ResetPowerupEffects(iter);
+            PowerUp::ResetPowerupEffects(iter);
+            iter->second->powered_up = false;
         }
         ++iter;
     }

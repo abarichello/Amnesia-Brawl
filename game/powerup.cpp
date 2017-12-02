@@ -1,33 +1,48 @@
 #include "powerup.h"
 
-PowerUp::PowerUp(b2World& world) {
+PowerUp::PowerUp() {
     rect.setSize(sf::Vector2f(25.f, 25.f));
-    rect.setFillColor(sf::Color(200, 150, 0));
+    rect.setOrigin(rect.getLocalBounds().width / 2, rect.getLocalBounds().height / 2);
 
     /* Effects:
-    1.  Explosion
+    1.  Invisibility
     2.  Speed
-    3.  Rage mode (invincibility + death on touch)
+    3.  Immunity
     4.  Float mode
+    5.  Stun other players
     */
-    // effect = GenerateRandom(3);
-    effect = 4;
 
-    // const float density = 1;
-    // bodydef.type = b2_dynamicBody;
-    // body = world.CreateBody(&bodydef);
-
-    // shape.SetAsBox(rect.getLocalBounds().width / 2 / SCALE, rect.getLocalBounds().height / SCALE);
-    // body->CreateFixture(&shape, density);
+    effect = GenerateRandom(4);
+    // effect = 3;
+    switch (effect) {
+        case 1:
+            rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility
+            break;
+        case 2:
+            rect.setFillColor(sf::Color(0, 100, 200)); // Speed
+            break;
+        case 3:
+            rect.setFillColor(sf::Color(255, 196, 0)); // Immunity
+            break;
+        case 4:
+            rect.setFillColor(sf::Color(123, 184, 255)); // Floaty
+            break;
+    }   
 }
 
-// PowerUp::~PowerUp() {
-//     body->GetWorld()->DestroyBody(body);
-// }
+void PowerUp::Invisibility(std::map<std::size_t, Player*>::const_iterator& iter) {
+    auto color = iter->second->rect.getFillColor();
+    color.a = 55;
+    iter->second->rect.setFillColor(color);
+}
 
 void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->max_speed = 30.f;
     iter->second->jump_impulse = 20.f;
+}
+
+void PowerUp::Immunity(std::map<std::size_t, Player*>::const_iterator& iter) {
+    iter->second->rectA.setSize(sf::Vector2f(0, 0));
 }
 
 void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -38,9 +53,15 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     iter->second->max_speed = 10.f;
     iter->second->jump_impulse = 15.f;
     iter->second->body->SetGravityScale(1.0f);
+    auto color = iter->second->rect.getFillColor();
+    color.a = 255;
+    iter->second->rect.setFillColor(color);
+    iter->second->rectA.setSize(sf::Vector2f(30, 4));
 }
 
-void PowerUp::Update(sf::Time elapsed_time) {
+void PowerUp::Update(float countdown) {
+    rect.setRotation(countdown * rotation);
+
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 }

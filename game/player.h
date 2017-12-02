@@ -13,7 +13,7 @@ public:
     void Respawn();
 
     std::size_t number;
-    std::size_t score = 0;
+    int score = 0;
     float movement_speed = 1000.f;
     float max_speed = 10.f;
     float jump_impulse = 15.f;

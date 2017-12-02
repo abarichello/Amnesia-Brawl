@@ -38,7 +38,7 @@ public:
     Player* player3;
     Player* player4;
     Obstacle wall;
-    PowerUp powerup;
+    // PowerUp powerup;
     
     sf::Color amnesia_blue;
     sf::Color amnesia_red;
