@@ -4,16 +4,16 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL"),
     gravity(0.f, 18.f),
     world(gravity),
-    hud(3) {
+    hud(4) {
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
     amnesia_dark_blue = sf::Color(29, 12, 137);
     amnesia_dark_red = sf::Color(158, 0, 0);
 
-    map = new Map(3, world, obstacle_array);
+    map = new Map(1, world, obstacle_array);
     LoadResources();
-    LoadPlayers(3);
+    LoadPlayers(4);
 }
 
 void Game::Start() {
@@ -56,6 +56,16 @@ void Game::Start() {
             wall.rect.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
             wall.rect.setRotation(wall.body->GetAngle() * 180 / b2_pi);
             window.draw(wall.rect);
+        }
+
+        // Update springs
+        itr = _game_object_manager._game_objects.begin();
+        while (itr != _game_object_manager._game_objects.end()) {
+            for (auto spring : map->spring_array) {
+                spring.Update(itr, elapsed_time);
+                window.draw(spring.rect);
+            }
+            ++itr;
         }
 
         // Player-Player collision
@@ -141,12 +151,13 @@ void Game::LoadPlayers(std::size_t number_of_players) {
     player2 = new Player();
     SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
     SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
-    if (number_of_players == 3) {
+    if (number_of_players > 2 && number_of_players < 5) {
         player3 = new Player();
         SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
-    } else if (number_of_players == 4) {
-        player4 = new Player();
-        SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
+        if (number_of_players == 4) {
+            player4 = new Player();
+            SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
+        }
     }
 }
 

@@ -55,6 +55,12 @@ void Map::CreateAngledWall(b2World& world, std::vector<Obstacle>& obstacle_array
     obstacle_array.push_back(wall);
 }
 
+void Map::DrawSprings(sf::RenderWindow& window) {
+    for (auto spring : spring_array) {
+        window.draw(spring.rect);
+    }
+}
+
 void Map::ClearMap(std::vector<Obstacle>& obstacle_array) {
     for (auto wall : obstacle_array) {
         obstacle_array.pop_back();
@@ -86,7 +92,11 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
     CreateAngledWall(world, obstacle_array, GAME_WIDTH/2 + GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/40,  GAME_WIDTH/2,  GAME_HEIGHT/8,  true, 350, 5.f); // Lower right rectangle
     CreateAngledWall(world, obstacle_array, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f); // Fat lower left platform
     CreateAngledWall(world, obstacle_array,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f); // Upper right angled border
-    
+ 
+    Spring spring;
+    spring.rect.setPosition(sf::Vector2f(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/16));
+    spring_array.push_back(spring);
+
     GenerateBorders(world, obstacle_array);
 }
 

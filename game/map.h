@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "obstacle.h"
+#include "spring.h"
 
 class Map {
 public:
@@ -9,6 +10,9 @@ public:
     void CreateWall(b2World& world, std::vector<Obstacle>& obstacle_array, int posX, int posY, int sizeX, int sizeY, bool is_ground);
     void CreateAngledWall(b2World& world, std::vector<Obstacle>& obstacle_array, int posX, int posY, int sizeX, int sizeY, bool is_ground, size_t angle, float friction);
     void ClearMap(std::vector<Obstacle>& obstacle_array);
+    void DrawSprings(sf::RenderWindow& window);
+
+    std::vector<Spring> spring_array;
     
 private:
     void GenerateBorders(b2World& world, std::vector<Obstacle>& obstacle_array);

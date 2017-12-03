@@ -20,12 +20,13 @@ HUD::HUD(std::size_t number_of_players) {
     score_array[1].setFillColor(sf::Color(227, 12, 18));
     score_array[0].setPosition(score.getLocalBounds().width/2, GAME_HEIGHT - score.getLocalBounds().height);
     score_array[1].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5/2, GAME_HEIGHT - score.getLocalBounds().height);
-    if (number_of_players == 3) {
+    if (number_of_players > 2 && number_of_players < 5) {
         score_array[2].setFillColor(sf::Color(29, 12, 137));
-        score_array[2].setPosition(score.getLocalBounds().width/2, score.getLocalBounds().height/2);
-    } else if (number_of_players == 4) {
-        score_array[3].setFillColor(sf::Color(158, 0, 0));
-        score_array[3].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5/2, score.getLocalBounds().height/2);
+        score_array[2].setPosition(score.getLocalBounds().width / 2, score.getLocalBounds().height / 2);
+        if (number_of_players == 4) {
+            score_array[3].setFillColor(sf::Color(158, 0, 0));
+            score_array[3].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5 / 2, score.getLocalBounds().height / 2);
+        }
     }
 
     match_clock.setFont(hud_font);
@@ -33,7 +34,7 @@ HUD::HUD(std::size_t number_of_players) {
     match_clock.setOutlineThickness(1);
     match_clock.setCharacterSize(25);
     match_clock.setString("0:00");
-    match_clock.setPosition(GAME_WIDTH/2 - match_clock.getLocalBounds().width/2, match_clock.getLocalBounds().height);
+    match_clock.setPosition(GAME_WIDTH/2 - match_clock.getLocalBounds().width / 2, match_clock.getLocalBounds().height);
 }
 
 void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float countdown) {
