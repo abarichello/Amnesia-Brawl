@@ -121,7 +121,7 @@ void Game::Start() {
                             iter->second->powered_up = true;
                             break;
                         case 3:
-                            powerup.Immunity(iter);
+                            powerup.Rage(iter);
                             iter->second->powered_up = true;
                             break;
                         case 4:
@@ -153,10 +153,10 @@ void Game::LoadPlayers(std::size_t number_of_players) {
     SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
     if (number_of_players > 2 && number_of_players < 5) {
         player3 = new Player();
-        SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
+        SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
         if (number_of_players == 4) {
             player4 = new Player();
-            SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
+            SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
         }
     }
 }

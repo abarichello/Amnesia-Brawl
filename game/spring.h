@@ -9,5 +9,5 @@ public:
     void Update(std::map<std::size_t, Player*>::const_iterator &iter, sf::Time elapsed_time);
 
 private:
-    float spring_propulsion = 300000.f;
+    float spring_propulsion = 100000.f;
 };

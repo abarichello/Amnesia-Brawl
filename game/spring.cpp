@@ -8,7 +8,7 @@ Spring::Spring() {
 
 void Spring::Draw(sf::RenderWindow& window) {
     window.draw(rect);
-}
+}   
 
 void Spring::Update(std::map<std::size_t, Player*>::const_iterator &iter, sf::Time elapsed_time) {
     if (iter->second->rect.getGlobalBounds().intersects(rect.getGlobalBounds())) {

@@ -7,13 +7,13 @@ PowerUp::PowerUp() {
     /* Effects:
     1.  Invisibility
     2.  Speed
-    3.  Immunity
+    3.  RAGE MODE (Immunity + death on touch)
     4.  Float mode
     5.  Stun other players
     */
 
-    effect = GenerateRandom(4);
-    // effect = 3;
+    // effect = GenerateRandom(4);
+    effect = 3;
     switch (effect) {
         case 1:
             rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility
@@ -22,7 +22,7 @@ PowerUp::PowerUp() {
             rect.setFillColor(sf::Color(0, 100, 200)); // Speed
             break;
         case 3:
-            rect.setFillColor(sf::Color(255, 196, 0)); // Immunity
+            rect.setFillColor(sf::Color(155, 10, 10)); // RAGE MODE
             break;
         case 4:
             rect.setFillColor(sf::Color(123, 184, 255)); // Floaty
@@ -41,8 +41,10 @@ void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->jump_impulse = 20.f;
 }
 
-void PowerUp::Immunity(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
+    iter->second->rectB.setSize(sf::Vector2f(58, 70));
+    iter->second->rectB.setOrigin(sf::Vector2f(24, 48)); // set rectB position to the same of rect
 }
 
 void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -50,13 +52,22 @@ void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
 }
 
 void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator& iter) {
+    // Reset speed
     iter->second->max_speed = 10.f;
     iter->second->jump_impulse = 15.f;
+
+    // Reset floaty
     iter->second->body->SetGravityScale(1.0f);
+
+    // Reset invisibility
     auto color = iter->second->rect.getFillColor();
     color.a = 255;
     iter->second->rect.setFillColor(color);
+
+    // Reset RAGE mode
     iter->second->rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
+    iter->second->rectB.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
+    iter->second->rectB.setOrigin(iter->second->rectB.getLocalBounds().width / 2, iter->second->rectB.getLocalBounds().height / 2);
 }
 
 void PowerUp::Update(float countdown) {

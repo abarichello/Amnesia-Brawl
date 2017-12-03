@@ -94,7 +94,7 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
     CreateAngledWall(world, obstacle_array,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f); // Upper right angled border
  
     Spring spring;
-    spring.rect.setPosition(sf::Vector2f(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/16));
+    spring.rect.setPosition(sf::Vector2f(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/12));
     spring_array.push_back(spring);
 
     GenerateBorders(world, obstacle_array);
