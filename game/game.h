@@ -34,7 +34,6 @@ public:
     Player* player2;
     Player* player3;
     Player* player4;
-    Obstacle wall;
     Map* map;
     
     sf::Color amnesia_blue;

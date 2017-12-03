@@ -17,7 +17,7 @@ Game::Game():
 }
 
 void Game::Start() {
-    window.setFramerateLimit(70);
+    window.setFramerateLimit(80);
     float countdown = 180.f;
     powerup_clock.restart();
 

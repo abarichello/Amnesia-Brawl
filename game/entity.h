@@ -14,10 +14,12 @@ public:
 
     b2Body* body;
     b2BodyDef bodydef;
+    b2CircleShape circle_shape;
     b2PolygonShape shape;
     b2FixtureDef fixturedef;
 
     sf::RectangleShape rect;
+    sf::CircleShape circ;
     sf::Texture texture;
     sf::Sprite sprite;
 
