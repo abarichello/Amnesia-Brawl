@@ -119,4 +119,12 @@ void Map::LoadLevel3(b2World& world, std::vector<Obstacle>& obstacle_array) {
     //         World                                            posX                           posY         sizeX               sizeY   grnd angle friction
     CreateAngledWall(world, obstacle_array,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 0.1f); // Lower left rectangle
     CreateAngledWall(world, obstacle_array, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 0.1f); // Lower right rectangle
+
+    Spring spring;
+    spring.rect.setPosition(sf::Vector2f(GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7 - spring.rect.getLocalBounds().height));
+    spring.rect.setRotation(10);
+    spring_array.push_back(spring);
+    spring.rect.setPosition(sf::Vector2f(GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7 - spring.rect.getLocalBounds().height));
+    spring.rect.setRotation(350);
+    spring_array.push_back(spring);
 }

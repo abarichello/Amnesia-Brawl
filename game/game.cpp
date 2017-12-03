@@ -11,7 +11,7 @@ Game::Game():
     amnesia_dark_blue = sf::Color(29, 12, 137);
     amnesia_dark_red = sf::Color(158, 0, 0);
 
-    map = new Map(1, world, obstacle_array);
+    map = new Map(3, world, obstacle_array);
     LoadResources();
     LoadPlayers(4);
 }
@@ -126,6 +126,10 @@ void Game::Start() {
                             break;
                         case 4:
                             powerup.Floaty(iter);
+                            iter->second->powered_up = true;
+                            break;
+                        case 5:
+                            powerup.Immunity(iter);
                             iter->second->powered_up = true;
                             break;
                     }
