@@ -23,7 +23,6 @@ public:
 
     sf::RenderWindow window;
     sf::Clock global_clock;
-    sf::Clock powerup_clock;
     sf::Text match_clock;
     
     b2Vec2 gravity;
@@ -44,6 +43,7 @@ public:
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;
     std::vector<PowerUp> powerup_array;
+    std::vector<b2Vec2> spawn_locations;
 
     static GameObjectManager _game_object_manager;
 };

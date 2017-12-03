@@ -28,6 +28,8 @@ void Player::Draw(sf::RenderWindow& window) {
 
 void Player::Respawn() {
     body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH) / SCALE, GenerateRandom(GAME_HEIGHT) / SCALE), 0);
+    body->SetLinearVelocity(b2Vec2(0, -5));
+    jumps_remaining = 1;
 }
 
 void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array) {
@@ -73,5 +75,12 @@ void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array
         if (rectB.getGlobalBounds().intersects(obstacle.rect.getGlobalBounds()) && obstacle.is_ground) {
             jumps_remaining = 1;
         }
+    }
+
+    // Out of bounds
+    if (rect.getPosition().x > GAME_WIDTH + 200 || rect.getPosition().x < -500 ||
+        rect.getPosition().y > GAME_HEIGHT + 200 || rect.getPosition().y < -500) {
+        Respawn();
+        score -= 1;
     }
 }

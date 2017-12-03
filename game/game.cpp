@@ -11,7 +11,7 @@ Game::Game():
     amnesia_dark_blue = sf::Color(29, 12, 137);
     amnesia_dark_red = sf::Color(158, 0, 0);
 
-    map = new Map(1, world, obstacle_array);
+    map = new Map(3, world, obstacle_array);
     LoadResources();
     LoadPlayers(4);
 }
@@ -19,7 +19,7 @@ Game::Game():
 void Game::Start() {
     window.setFramerateLimit(80);
     float countdown = 180.f;
-    powerup_clock.restart();
+    sf::Clock powerup_clock;
 
     // Main game loop
     while (window.isOpen()) {
@@ -74,14 +74,15 @@ void Game::Start() {
         }
 
         // Powerup generation
-        if (powerup_clock.getElapsedTime().asSeconds() > 4.f && powerup_array.size() < 1) {
+        if (powerup_clock.getElapsedTime().asSeconds() > 5.f && powerup_array.size() == 0) {
             powerup_clock.restart();
             PowerUp powerup;
             powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
             powerup_array.push_back(powerup);
             ResetPowerups();
-        } else if (powerup_array.size() == 1) {
+        } else if (powerup_array.size() == 1 && powerup_clock.getElapsedTime().asSeconds() > 10.f) { // Clean not picked up powerups
             powerup_clock.restart();
+            powerup_array.pop_back();
         }
 
         // Powerup drawing
@@ -119,6 +120,7 @@ void Game::Start() {
                             break;
                     }
                     iter2->alive = false;
+                    powerup_clock.restart();
                 }
                 ++iter2;
             }
@@ -129,6 +131,7 @@ void Game::Start() {
         iter = _game_object_manager._game_objects.begin();
         hud.Update(iter, countdown);
         hud.Draw(window);
+
         window.display();
     }
 }
@@ -152,12 +155,16 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
     player->left = left;
     player->right = right;
     player->rect.setFillColor(color);
-    CreatePlayer(world, player, GenerateRandom(GAME_WIDTH), GenerateRandom(GAME_HEIGHT));
+    CreatePlayer(world, player, spawn_locations[number-1].x, spawn_locations[number-1].y);
 }
 
 // Load game sprites
 void Game::LoadResources() {
-    // TODO
+    // Default spawn locations
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH/3, GAME_HEIGHT/3));
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3, GAME_HEIGHT/3));
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
 }
 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {

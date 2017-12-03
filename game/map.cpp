@@ -72,8 +72,8 @@ void Map::GenerateBorders(b2World& world, std::vector<Obstacle>& obstacle_array)
 
 // PLATFORM LEVEL
 void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
-    //         World                                        posX                           posY         sizeX           sizeY  ground?
     // Platforms
+    //         World                                        posX                           posY         sizeX           sizeY  ground?
     CreateWall(world, obstacle_array, GAME_WIDTH/2 - GAME_WIDTH/3,  GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/45, true); // Upper left platform
     CreateWall(world, obstacle_array,                GAME_WIDTH/2,  GAME_HEIGHT/2 - GAME_HEIGHT/5,  GAME_WIDTH/5, GAME_HEIGHT/35, true); // Upper middle platform
     CreateWall(world, obstacle_array,                GAME_WIDTH/2,  GAME_HEIGHT/2 + GAME_HEIGHT/4,  GAME_WIDTH/5, GAME_HEIGHT/40, true); // Middle middle platform
@@ -81,7 +81,7 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
     CreateWall(world, obstacle_array,   GAME_WIDTH - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/20,  GAME_WIDTH/7, GAME_HEIGHT/60, true); // Middle right floating
     CreateWall(world, obstacle_array,  GAME_WIDTH - GAME_WIDTH/20,    GAME_HEIGHT - GAME_HEIGHT/3,  GAME_WIDTH/9, GAME_HEIGHT/35, true); // Middle right stub
     
-    //         World                                              posX                           posY         sizeX            sizeY   grnd angle friction
+    //         World                                              posX                           posY         sizeX              sizeY   grnd angle friction
     CreateAngledWall(world, obstacle_array, GAME_WIDTH/2 - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/50,  true,   7, 1.f); // Middle left platform
     CreateAngledWall(world, obstacle_array, GAME_WIDTH/2 + GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/40,  GAME_WIDTH/2,  GAME_HEIGHT/8,  true, 350, 5.f); // Lower right rectangle
     CreateAngledWall(world, obstacle_array, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f); // Fat lower left platform
@@ -92,8 +92,21 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
 
 // ABISS LEVEL
 void Map::LoadLevel2(b2World& world, std::vector<Obstacle>& obstacle_array) {
+
 }
 
 // FLOATING PLATFORMS LEVEL
 void Map::LoadLevel3(b2World& world, std::vector<Obstacle>& obstacle_array) {
+    // Platforms
+    //         World                                        posX                           posY            sizeX           sizeY  ground?
+    CreateWall(world, obstacle_array,  GAME_WIDTH/2 - GAME_WIDTH/3,  GAME_HEIGHT/2 - GAME_HEIGHT/5, GAME_WIDTH/10, GAME_HEIGHT/33, true); // Upper left platform
+    CreateWall(world, obstacle_array,  GAME_WIDTH/2 + GAME_WIDTH/3,  GAME_HEIGHT/2 - GAME_HEIGHT/5, GAME_WIDTH/10, GAME_HEIGHT/33, true); // Upper right platform
+    CreateWall(world, obstacle_array,                 GAME_WIDTH/2,    GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/7, GAME_HEIGHT/25, true); // Middle lower platform
+    CreateWall(world, obstacle_array,    GAME_WIDTH - GAME_WIDTH/2,                  GAME_HEIGHT/7,  GAME_WIDTH/7, GAME_HEIGHT/25, true); // Middle right platform
+    CreateWall(world, obstacle_array,  GAME_WIDTH/2 - GAME_WIDTH/8,                  GAME_HEIGHT/2,  GAME_WIDTH/7, GAME_HEIGHT/25, true); // Middle left mini platform
+    CreateWall(world, obstacle_array,  GAME_WIDTH/2 + GAME_WIDTH/8,                  GAME_HEIGHT/2,  GAME_WIDTH/7, GAME_HEIGHT/25, true); // Middle right mini platform
+
+    //         World                                            posX                           posY         sizeX               sizeY   grnd angle friction
+    CreateAngledWall(world, obstacle_array,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 0.1f); // Lower left rectangle
+    CreateAngledWall(world, obstacle_array, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 0.1f); // Lower right rectangle
 }
