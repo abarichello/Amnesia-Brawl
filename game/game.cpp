@@ -4,7 +4,7 @@ Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL"),
     gravity(0.f, 18.f),
     world(gravity),
-    hud(4) {
+    hud(3) {
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -13,7 +13,7 @@ Game::Game():
 
     map = new Map(3, world, obstacle_array);
     LoadResources();
-    LoadPlayers(4);
+    LoadPlayers(3);
 }
 
 void Game::Start() {
@@ -141,10 +141,11 @@ void Game::LoadPlayers(std::size_t number_of_players) {
     player2 = new Player();
     SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
     SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
-    if (number_of_players == 4) {
+    if (number_of_players == 3) {
         player3 = new Player();
-        player4 = new Player();
         SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
+    } else if (number_of_players == 4) {
+        player4 = new Player();
         SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
     }
 }

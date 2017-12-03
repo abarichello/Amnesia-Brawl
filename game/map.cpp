@@ -11,7 +11,7 @@ Map::Map(std::size_t level_number, b2World& world, std::vector<Obstacle>& obstac
             LoadLevel2(world, obstacle_array); // ABISS LEVEL
             break;
         case 3:
-            LoadLevel3(world, obstacle_array); // FLOATING PLATFORMS LEVEL
+            LoadLevel3(world, obstacle_array); // TREE BRANCHES LEVEL
             break;
     }
 }
@@ -95,7 +95,7 @@ void Map::LoadLevel2(b2World& world, std::vector<Obstacle>& obstacle_array) {
 
 }
 
-// FLOATING PLATFORMS LEVEL
+// TREE BRANCHES LEVEL
 void Map::LoadLevel3(b2World& world, std::vector<Obstacle>& obstacle_array) {
     // Platforms
     //         World                                        posX                           posY            sizeX           sizeY  ground?

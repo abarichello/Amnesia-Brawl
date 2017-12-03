@@ -20,10 +20,11 @@ HUD::HUD(std::size_t number_of_players) {
     score_array[1].setFillColor(sf::Color(227, 12, 18));
     score_array[0].setPosition(score.getLocalBounds().width/2, GAME_HEIGHT - score.getLocalBounds().height);
     score_array[1].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5/2, GAME_HEIGHT - score.getLocalBounds().height);
-    if (number_of_players == 4) {
+    if (number_of_players == 3) {
         score_array[2].setFillColor(sf::Color(29, 12, 137));
-        score_array[3].setFillColor(sf::Color(158, 0, 0));
         score_array[2].setPosition(score.getLocalBounds().width/2, score.getLocalBounds().height/2);
+    } else if (number_of_players == 4) {
+        score_array[3].setFillColor(sf::Color(158, 0, 0));
         score_array[3].setPosition(GAME_WIDTH - score.getLocalBounds().width * 5/2, score.getLocalBounds().height/2);
     }
 
