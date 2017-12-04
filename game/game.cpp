@@ -7,6 +7,7 @@ Game::Game():
     world(gravity),
     hud(4) {
 
+    title_screen = new class TitleScreen();
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -19,12 +20,11 @@ Game::Game():
 }
 
 void Game::Start() {
-    window.setFramerateLimit(80);
+    // window.setFramerateLimit(80);
     window.setVerticalSyncEnabled(true);
     window.setView(game_view);
-    
-    float countdown = 10.f; // Round duration
-    float win_screen_countdown = 5.f; // Win Screen duration
+
+    float countdown = 15.f; // Round duration
     sf::Clock powerup_clock;
 
     // Main game loop
@@ -35,134 +35,176 @@ void Game::Start() {
                 window.close();
             }
 
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                window.close();
-            }
-        }
-
-        // Delta time between frames
-        sf::Time elapsed_time = global_clock.restart();
-        countdown -= elapsed_time.asSeconds();
-
-        world.Step(1.f/60.f, 10, 10);
-        window.clear();
-
-        // Update players
-        std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
-        while (itr != _game_object_manager._game_objects.end()) {
-            itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
-            itr->second->rect.setRotation(itr->second->body->GetAngle() * 180 / b2_pi);
-            itr->second->Update(elapsed_time, obstacle_array);
-            itr->second->Draw(window);
-            itr++;
-        }
-
-        // Update walls
-        for (auto wall : obstacle_array) {
-            wall.rect.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
-            wall.rect.setRotation(wall.body->GetAngle() * 180 / b2_pi);
-            window.draw(wall.rect);
-        }
-
-        // Update springs
-        itr = _game_object_manager._game_objects.begin();
-        while (itr != _game_object_manager._game_objects.end()) {
-            for (auto spring : map->spring_array) {
-                spring.Update(itr, elapsed_time);
-                window.draw(spring.rect);
-            }
-            ++itr;
-        }
-
-        // Player-Player collision
-        std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
-        while (iter != _game_object_manager._game_objects.end() && countdown > 0) { // Stop collisions after game ends
-            std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
-            while (iter2 != _game_object_manager._game_objects.end()) {
-                if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
-                    iter->second->score += 1;
-                    iter->second->jumps_remaining = 1;
-                    iter2->second->Respawn();
+            if (game_state == GameState::STATE_TITLE) {
+                
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    window.close();
+                } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+                    game_state = GameState::STATE_LEVEL_SELECT;
                 }
-                ++iter2;
+
+            } else if (game_state == GameState::STATE_LEVEL_SELECT) {
+
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    game_state = GameState::STATE_TITLE;
+                }
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+                    game_state = GameState::STATE_PLAY; // DEBUG
+                }
+
+            } else if (game_state == GameState::STATE_PLAY) {
+
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    window.close(); // DEBUG
+                    // game_state == GameState::STATE_PAUSE;
+                }
+
+            } else if (game_state == GameState::STATE_PAUSE) {
+
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    game_state = GameState::STATE_PLAY;
+                } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
+                    game_state = GameState::STATE_LEVEL_SELECT;
+                }
+
             }
-            ++iter;
         }
 
-        // Powerup generation
-        if (powerup_clock.getElapsedTime().asSeconds() > 5.f && powerup_array.size() == 0) {
-            powerup_clock.restart();
-            PowerUp powerup;
-            powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
-            powerup_array.push_back(powerup);
-            ResetPowerups();
-        } else if (powerup_array.size() == 1 && powerup_clock.getElapsedTime().asSeconds() > 10.f) { // Clean not picked up powerups
-            powerup_clock.restart();
-            powerup_array.pop_back();
-        }
+        switch (game_state) {
+            case STATE_TITLE:
+                TitleScreen(window);
+                break;
+            case STATE_PLAY:
+                // GAME LOOP
+                // Delta time between frames
+                sf::Time elapsed_time = global_clock.restart();
+                countdown -= elapsed_time.asSeconds();
 
-        // Powerup drawing
-        for (auto powerup : powerup_array) {
-            powerup.Update(countdown);
-            powerup.Draw(window);
-            if (!powerup.alive) {
-                powerup_array.pop_back();
-            }
-        }
+                world.Step(1.f/60.f, 10, 10);
+                window.clear();
 
-        // Powerup collision
-        iter = _game_object_manager._game_objects.begin();
-        while (iter != _game_object_manager._game_objects.end()) {
-            std::vector<PowerUp>::iterator iter2 = powerup_array.begin();
-            while (iter2 != powerup_array.end()) {
-                if (iter->second->rect.getGlobalBounds().intersects(iter2->rect.getGlobalBounds())) {
-                    auto powerup = powerup_array[0];
-                    switch (iter2->effect) {
-                        case 1:
-                            powerup.Invisibility(iter);
-                            iter->second->powered_up = true;
-                            break;
-                        case 2:
-                            powerup.Speed(iter);
-                            iter->second->powered_up = true;
-                            break;
-                        case 3:
-                            powerup.Rage(iter);
-                            iter->second->powered_up = true;
-                            break;
-                        case 4:
-                            powerup.Floaty(iter);
-                            iter->second->powered_up = true;
-                            break;
-                        case 5:
-                            powerup.Immunity(iter);
-                            iter->second->powered_up = true;
-                            break;
+                // Update players
+                std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
+                while (itr != _game_object_manager._game_objects.end()) {
+                    itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
+                    itr->second->rect.setRotation(itr->second->body->GetAngle() * 180 / b2_pi);
+                    itr->second->Update(elapsed_time, obstacle_array);
+                    itr->second->Draw(window);
+                    itr++;
+                }
+
+                // Update walls
+                for (auto wall : obstacle_array) {
+                    wall.rect.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
+                    wall.rect.setRotation(wall.body->GetAngle() * 180 / b2_pi);
+                    window.draw(wall.rect);
+                }
+
+                // Update springs
+                itr = _game_object_manager._game_objects.begin();
+                while (itr != _game_object_manager._game_objects.end()) {
+                    for (auto spring : map->spring_array) {
+                        spring.Update(itr, elapsed_time);
+                        window.draw(spring.rect);
                     }
-                    iter2->alive = false;
-                    powerup_clock.restart();
+                    ++itr;
                 }
-                ++iter2;
-            }
-            ++iter;
+
+                // Player-Player collision
+                std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+                while (iter != _game_object_manager._game_objects.end() && countdown > 0) { // Stop collisions after game ends
+                    std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
+                    while (iter2 != _game_object_manager._game_objects.end()) {
+                        if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
+                            iter->second->score += 1;
+                            iter->second->jumps_remaining = 1;
+                            iter2->second->Respawn();
+                        }
+                        ++iter2;
+                    }
+                    ++iter;
+                }
+
+                // Powerup generation
+                if (powerup_clock.getElapsedTime().asSeconds() > 5.f && powerup_array.size() == 0) {
+                    powerup_clock.restart();
+                    PowerUp powerup;
+                    powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
+                    powerup_array.push_back(powerup);
+                    ResetPowerups();
+                } else if (powerup_array.size() == 1 && powerup_clock.getElapsedTime().asSeconds() > 10.f) { // Clean not picked up powerups
+                    powerup_clock.restart();
+                    powerup_array.pop_back();
+                }
+
+                // Powerup drawing
+                for (auto powerup : powerup_array) {
+                    powerup.Update(countdown);
+                    powerup.Draw(window);
+                    if (!powerup.alive) {
+                        powerup_array.pop_back();
+                    }
+                }
+
+                // Powerup collision
+                iter = _game_object_manager._game_objects.begin();
+                while (iter != _game_object_manager._game_objects.end() && countdown > 0) {
+                    std::vector<PowerUp>::iterator iter2 = powerup_array.begin();
+                    while (iter2 != powerup_array.end()) {
+                        if (iter->second->rect.getGlobalBounds().intersects(iter2->rect.getGlobalBounds())) {
+                            auto powerup = powerup_array[0];
+                            switch (iter2->effect) {
+                                case 1:
+                                    powerup.Invisibility(iter);
+                                    iter->second->powered_up = true;
+                                    break;
+                                case 2:
+                                    powerup.Speed(iter);
+                                    iter->second->powered_up = true;
+                                    break;
+                                case 3:
+                                    powerup.Rage(iter);
+                                    iter->second->powered_up = true;
+                                    break;
+                                case 4:
+                                    powerup.Floaty(iter);
+                                    iter->second->powered_up = true;
+                                    break;
+                                case 5:
+                                    powerup.Immunity(iter);
+                                    iter->second->powered_up = true;
+                                    break;
+                            }
+                            iter2->alive = false;
+                            powerup_clock.restart();
+                        }
+                        ++iter2;
+                    }
+                    ++iter;
+                }
+
+                // HUD Updates
+                iter = _game_object_manager._game_objects.begin();
+                hud.Update(iter, countdown);
+                hud.Draw(window);
+
+                // Winner check
+                if (countdown < 0) {
+                    powerup_clock.restart();
+                    WinnerCheck();
+                    if (powerup_clock.getElapsedTime().asSeconds() > 6) {
+                        game_state = GameState::STATE_TITLE;
+                    }
+                }
+
+                window.display();
+                break;
         }
-
-        // Winner check
-        if (countdown < 0) {
-            WinnerCheck();
-            win_screen_countdown -= elapsed_time.asSeconds();
-            if (win_screen_countdown < 0) {
-                std::cout << "Change game_state" << "\n";
-            }
-        }
-
-        // HUD Updates
-        iter = _game_object_manager._game_objects.begin();
-        hud.Update(iter, countdown);
-        hud.Draw(window);
-
-        window.display();
     }
+}
+
+void Game::TitleScreen(sf::RenderWindow& window) {
+    title_screen->Draw(window);
 }
 
 void Game::LoadPlayers(std::size_t number_of_players) {
@@ -230,7 +272,8 @@ void Game::WinnerCheck() {
     // Update winner text
     hud.winner_text.setOrigin(hud.winner_text.getLocalBounds().width / 2, hud.winner_text.getLocalBounds().height / 2);
     hud.winner_text.setPosition(winner->rect.getPosition().x, winner->rect.getPosition().y - 100);
-    hud.winner_text.setString("Player  " + std::to_string(winner->number) + "  WON!");
+    hud.winner_text.setString("Player  " + std::to_string(winner->number) + "  wins!");
+    // TODO add amnesia logo
     window.draw(hud.winner_text);
 
     // Center view to winner

@@ -7,6 +7,7 @@
 #include "hud.h"
 #include "powerup.h"
 #include "map.h"
+#include "title_screen.h"
 
 #include <utility>
 
@@ -19,6 +20,8 @@ public:
     void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
+    void TitleScreen(sf::RenderWindow& window);
+
     void WinnerCheck();
     void ResetPowerups();
 
@@ -26,10 +29,20 @@ public:
     sf::View game_view;
     sf::Clock global_clock;
     sf::Text match_clock;
-    
+
+    enum GameState {
+        STATE_TITLE,
+        STATE_LEVEL_SELECT,
+        STATE_PLAY,
+        STATE_PAUSE
+    };
+
+    GameState game_state = GameState::STATE_TITLE;
+
     b2Vec2 gravity;
     b2World world;
     HUD hud;
+    class TitleScreen* title_screen;
     
     Player* player1;
     Player* player2;

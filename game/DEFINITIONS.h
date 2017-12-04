@@ -13,6 +13,8 @@ static const float HITBOX_Y = 5.f;
 // FONTS
 #define HUD_FONT            "media/fonts/hud_font.ttf"
 #define BONBON_FONT         "media/fonts/bonbon.otf"
+#define SQUARE_FONT         "media/fonts/squarefont.ttf"
+#define LINE_BRK_FONT       "media/fonts/line_brk.ttf"
 
 // AUDIO
 #define BACKGROUND_SONG     "media/audio/fishing.wav"
