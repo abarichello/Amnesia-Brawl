@@ -19,9 +19,11 @@ public:
     void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
+    void WinnerCheck();
     void ResetPowerups();
 
     sf::RenderWindow window;
+    sf::View game_view;
     sf::Clock global_clock;
     sf::Text match_clock;
     
@@ -39,6 +41,9 @@ public:
     sf::Color amnesia_red;
     sf::Color amnesia_dark_blue;
     sf::Color amnesia_dark_red;
+
+    sf::SoundBuffer sound_buffer;
+    sf::Music background_music;
 
     std::vector<Player*> player_array;
     std::vector<Obstacle> obstacle_array;

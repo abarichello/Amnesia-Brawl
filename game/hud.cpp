@@ -4,6 +4,9 @@ HUD::HUD(std::size_t number_of_players) {
     if (!hud_font.loadFromFile(HUD_FONT)) {
         std::cout << "Error loading font!" << "\n";
     }
+    if (!bonbon_font.loadFromFile(BONBON_FONT)) {
+        std::cout << "Error loading bonbon!" << "\n";
+    }
 
     this->number_of_players = number_of_players;
 
@@ -33,8 +36,15 @@ HUD::HUD(std::size_t number_of_players) {
     match_clock.setOutlineColor(sf::Color(100, 100, 100));
     match_clock.setOutlineThickness(1);
     match_clock.setCharacterSize(25);
-    match_clock.setString("0:00");
+    match_clock.setString("0:00"); // placeholder string
     match_clock.setPosition(GAME_WIDTH/2 - match_clock.getLocalBounds().width / 2, match_clock.getLocalBounds().height);
+
+    winner_text.setFont(bonbon_font);
+    winner_text.setOutlineColor(sf::Color::Black);
+    winner_text.setOutlineThickness(3);
+    winner_text.setFillColor(sf::Color(227, 12, 18));
+    winner_text.setCharacterSize(50);
+    winner_text.setString("PX WON"); // placeholder string
 }
 
 void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float countdown) {
@@ -49,7 +59,7 @@ void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float cou
     }
 
     if (countdown < 0) {
-        match_clock.setString("-END-");    
+        match_clock.setString("-END-");
     } else {
         match_clock.setString(minutes + ":" + seconds);
     }

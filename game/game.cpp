@@ -2,9 +2,11 @@
 
 Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL"),
+    game_view(sf::FloatRect(0, 0, GAME_WIDTH, GAME_HEIGHT)),
     gravity(0.f, 18.f),
     world(gravity),
     hud(4) {
+
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -18,7 +20,11 @@ Game::Game():
 
 void Game::Start() {
     window.setFramerateLimit(80);
-    float countdown = 180.f;
+    window.setVerticalSyncEnabled(true);
+    window.setView(game_view);
+    
+    float countdown = 10.f; // Round duration
+    float win_screen_countdown = 5.f; // Win Screen duration
     sf::Clock powerup_clock;
 
     // Main game loop
@@ -70,7 +76,7 @@ void Game::Start() {
 
         // Player-Player collision
         std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
-        while (iter != _game_object_manager._game_objects.end()) {
+        while (iter != _game_object_manager._game_objects.end() && countdown > 0) { // Stop collisions after game ends
             std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
             while (iter2 != _game_object_manager._game_objects.end()) {
                 if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
@@ -141,6 +147,15 @@ void Game::Start() {
             ++iter;
         }
 
+        // Winner check
+        if (countdown < 0) {
+            WinnerCheck();
+            win_screen_countdown -= elapsed_time.asSeconds();
+            if (win_screen_countdown < 0) {
+                std::cout << "Change game_state" << "\n";
+            }
+        }
+
         // HUD Updates
         iter = _game_object_manager._game_objects.begin();
         hud.Update(iter, countdown);
@@ -181,6 +196,9 @@ void Game::LoadResources() {
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
+
+    background_music.openFromFile(BACKGROUND_SONG);
+    background_music.play();
 }
 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
@@ -194,6 +212,32 @@ void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     player->body->CreateFixture(&player->shape, density);
 
     _game_object_manager.Add(player->number, player);
+}
+
+void Game::WinnerCheck() {
+    // Iterate to get the highest score
+    auto iter = _game_object_manager._game_objects.begin();
+    auto winner = iter->second;
+    auto winner_score = iter->second->score;
+    while (iter != _game_object_manager._game_objects.end()) {
+        if (iter->second->score > winner_score) {
+            winner = iter->second;
+            winner_score = iter->second->score;
+        }
+        ++iter;
+    }
+
+    // Update winner text
+    hud.winner_text.setOrigin(hud.winner_text.getLocalBounds().width / 2, hud.winner_text.getLocalBounds().height / 2);
+    hud.winner_text.setPosition(winner->rect.getPosition().x, winner->rect.getPosition().y - 100);
+    hud.winner_text.setString("Player  " + std::to_string(winner->number) + "  WON!");
+    window.draw(hud.winner_text);
+
+    // Center view to winner
+    sf::View view;
+    view.setSize(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    view.setCenter(winner->rect.getPosition());
+    window.setView(view);
 }
 
 void Game::ResetPowerups() {

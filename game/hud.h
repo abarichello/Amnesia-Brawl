@@ -11,9 +11,12 @@ public:
     std::vector<sf::Text> score_array;
 
     std::size_t number_of_players;
+    
+    sf::Text score;
+    sf::Text match_clock;
+    sf::Text winner_text;
 
 private:
     sf::Font hud_font;
-    sf::Text score;
-    sf::Text match_clock;
+    sf::Font bonbon_font;
 };

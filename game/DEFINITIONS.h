@@ -7,6 +7,12 @@ static const float SCALE = 30;
 static const float HITBOX_X = 25.f;
 static const float HITBOX_Y = 5.f;
 
-#define PLAYER_TEXTURE "media/textures/player_texture.png"
+// TEXTURES
+#define PLAYER_TEXTURE      "media/textures/player_texture.png"
 
-#define HUD_FONT       "media/fonts/hud_font.ttf"
+// FONTS
+#define HUD_FONT            "media/fonts/hud_font.ttf"
+#define BONBON_FONT         "media/fonts/bonbon.otf"
+
+// AUDIO
+#define BACKGROUND_SONG     "media/audio/fishing.wav"
