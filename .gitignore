@@ -1,6 +1,7 @@
 sfml
 amnesia
 *.zip
+/game/media/audio/*
 
 # Prerequisites
 *.d
