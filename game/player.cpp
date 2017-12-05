@@ -2,10 +2,15 @@
 #include "player.h"
 
 Player::Player() {
+    Load(PLAYER_TEXTURE);
+    assert(loaded);
+
     rect.setSize(sf::Vector2f(48.f, 48.f));
     rect.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 2);
     rect.setFillColor(sf::Color(255, 100, 100));
     rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
+
+    sprite.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
 
     rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     rectA.setOrigin(rectA.getLocalBounds().width / 2, rectA.getLocalBounds().height / 2);
@@ -21,9 +26,10 @@ Player::~Player() {
 }
 
 void Player::Draw(sf::RenderWindow& window) {
-    window.draw(rect);
-    window.draw(rectA);
-    window.draw(rectB);
+    // window.draw(rect);
+    // window.draw(rectA);
+    // window.draw(rectB);
+    window.draw(sprite);
 }
 
 void Player::Respawn() {

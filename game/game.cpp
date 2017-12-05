@@ -242,7 +242,7 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
     player->jump = jump;
     player->left = left;
     player->right = right;
-    player->rect.setFillColor(color);
+    player->sprite.setColor(color);
     CreatePlayer(world, player, spawn_locations[number-1].x, spawn_locations[number-1].y);
 }
 
@@ -311,9 +311,6 @@ void Game::ResetPowerups() {
 
 void Game::Cleanup() {
     delete map;
-    // for (auto i = 1u; i <= _game_object_manager._game_objects.size(); ++i) {
-    //     _game_object_manager.Remove(i);
-    // }
     auto i = 1;
     std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {

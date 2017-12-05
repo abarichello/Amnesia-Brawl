@@ -33,8 +33,9 @@ HUD::HUD(std::size_t number_of_players) {
     }
 
     match_clock.setFont(hud_font);
-    match_clock.setOutlineColor(sf::Color(100, 100, 100));
-    match_clock.setOutlineThickness(1);
+    match_clock.setOutlineColor(sf::Color::White);
+    match_clock.setOutlineThickness(2);
+    match_clock.setFillColor(sf::Color(14, 77, 203));
     match_clock.setCharacterSize(25);
     match_clock.setString("0:00"); // placeholder string
     match_clock.setPosition(GAME_WIDTH/2 - match_clock.getLocalBounds().width / 2, match_clock.getLocalBounds().height);
