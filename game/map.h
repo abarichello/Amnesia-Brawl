@@ -12,6 +12,7 @@ public:
     void ClearMap(std::vector<Obstacle>& obstacle_array);
     void DrawSprings(sf::RenderWindow& window);
 
+    float win_screen_countdown = 6.f;
     std::vector<Spring> spring_array;
     
 private:

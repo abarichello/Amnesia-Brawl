@@ -7,6 +7,8 @@ static const float SCALE = 30;
 static const float HITBOX_X = 25.f;
 static const float HITBOX_Y = 5.f;
 
+static const float ROUND_TIME = 180.f;
+
 // TEXTURES
 #define PLAYER_TEXTURE      "media/textures/player_texture.png"
 

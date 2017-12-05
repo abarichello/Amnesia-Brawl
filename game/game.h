@@ -16,14 +16,17 @@ public:
     Game();
     void Start();
     void LoadResources();
+    void CreateRound(std::size_t players_num, std::size_t level_number, b2World& world, std::vector<Obstacle>& obstacle_array);
     void LoadPlayers(std::size_t number_of_players);
     void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
     void TitleScreen(sf::RenderWindow& window);
+    void GameLoop(float& countdown, sf::Clock& powerup_clock);
 
     void WinnerCheck();
     void ResetPowerups();
+    void Cleanup();
 
     sf::RenderWindow window;
     sf::View game_view;
@@ -41,7 +44,7 @@ public:
 
     b2Vec2 gravity;
     b2World world;
-    HUD hud;
+    HUD* hud;
     class TitleScreen* title_screen;
     
     Player* player1;
