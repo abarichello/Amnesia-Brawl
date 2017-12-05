@@ -13,7 +13,7 @@ PowerUp::PowerUp() {
     */
 
     effect = GenerateRandom(4);
-    // effect = 5;
+    // effect = 2;
     switch (effect) {
         case 1:
             rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility
@@ -34,9 +34,9 @@ PowerUp::PowerUp() {
 }
 
 void PowerUp::Invisibility(std::map<std::size_t, Player*>::const_iterator& iter) {
-    auto color = iter->second->rect.getFillColor();
-    color.a = 55;
-    iter->second->rect.setFillColor(color);
+    auto color = iter->second->sprite.getColor();
+    color.a = 95;
+    iter->second->sprite.setColor(color);
 }
 
 void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -67,9 +67,9 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     iter->second->body->SetGravityScale(1.0f);
 
     // Reset invisibility
-    auto color = iter->second->rect.getFillColor();
+    auto color = iter->second->sprite.getColor();
     color.a = 255;
-    iter->second->rect.setFillColor(color);
+    iter->second->sprite.setColor(color);
 
     // Reset RAGE and immunity mode
     iter->second->rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
