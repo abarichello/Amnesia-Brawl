@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/ACNPePl.png" align="center">
 #  
-
+---
 A local multiplayer game being developed to be played at the [Amnésia Open Bar](https://www.facebook.com/vaidaramnesia/) (UFSC Computer Science party).
 ---
 # Intro

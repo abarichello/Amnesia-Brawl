@@ -17,8 +17,8 @@ Game::Game():
 }
 
 void Game::Start() {
-    // window.setFramerateLimit(80);
-    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(80);
+    // window.setVerticalSyncEnabled(true);
 
     float countdown = ROUND_TIME; // Round duration
     sf::Clock powerup_clock;
@@ -103,9 +103,9 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
 
     // Update walls
     for (auto wall : obstacle_array) {
-        wall.rect.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
-        wall.rect.setRotation(wall.body->GetAngle() * 180 / b2_pi);
-        window.draw(wall.rect);
+        wall.sprite.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
+        wall.sprite.setRotation(wall.body->GetAngle() * 180 / b2_pi);
+        window.draw(wall.sprite);
     }
 
     // Update springs
@@ -113,7 +113,7 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
     while (itr != _game_object_manager._game_objects.end()) {
         for (auto spring : map->spring_array) {
             spring.Update(itr, elapsed_time);
-            window.draw(spring.rect);
+            spring.Draw(window);
         }
         ++itr;
     }

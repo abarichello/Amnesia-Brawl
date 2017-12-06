@@ -6,6 +6,7 @@ void Entity::Load(std::string filename) {
         filename = "";
     } else {
         filename = filename;
+        texture.setRepeated(true);
         sprite.setTexture(texture);
         loaded = true;
     }

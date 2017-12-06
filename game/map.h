@@ -21,5 +21,7 @@ private:
     void LoadLevel2(b2World& world, std::vector<Obstacle>& obstacle_array);
     void LoadLevel3(b2World& world, std::vector<Obstacle>& obstacle_array);
 
-    // sf::Texture leaf_texture;
+    sf::Texture grass_texture;
+    sf::Texture dirt_texture;
+    sf::Texture spring_texture;
 };

@@ -15,7 +15,7 @@ public:
     std::size_t number;
     int score = 0;
     float movement_speed = 1000.f;
-    float max_speed = 10.f;
+    float max_speed = 9.f;
     float jump_impulse = 15.f;
     std::size_t jumps_remaining = 1;
 

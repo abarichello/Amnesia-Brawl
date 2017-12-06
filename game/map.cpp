@@ -3,6 +3,19 @@
 Map::Map() = default;
 
 Map::Map(std::size_t level_number, b2World& world, std::vector<Obstacle>& obstacle_array) {
+    if (!grass_texture.loadFromFile(GRASS_TEXTURE)) {
+        std::cout << "Error loading grass_texture" << "\n";
+    }
+    if (!dirt_texture.loadFromFile(DIRT_TEXTURE)) {
+        std::cout << "Error loading dirt_texture" << "\n";
+    }
+    if (!spring_texture.loadFromFile(SPRING_TEXTURE)) {
+        std::cout << "Error loading spring texture" << "\n";
+    }
+
+    grass_texture.setRepeated(true);
+    dirt_texture.setRepeated(true);
+    
     switch(level_number) {
         case 1:
             LoadLevel1(world, obstacle_array); // PLATFORM LEVEL
@@ -28,9 +41,13 @@ void Map::CreateWall(b2World& world, std::vector<Obstacle>& obstacle_array, int 
     wall.fixturedef.shape = &wall.shape;
     wall.fixturedef.density = 0.f;
     wall.shape.SetAsBox(wall.rect.getLocalBounds().width / 2 / SCALE, wall.rect.getLocalBounds().height / 2 / SCALE);
-
+    
     wall.body = world.CreateBody(&wall.bodydef);
     wall.body->CreateFixture(&wall.fixturedef);
+
+    wall.sprite.setTexture(grass_texture);
+    wall.sprite.setOrigin(wall.rect.getLocalBounds().width / 2, wall.rect.getLocalBounds().height / 2);
+    wall.sprite.setTextureRect(sf::IntRect(0, 0, wall.rect.getLocalBounds().width, wall.rect.getLocalBounds().height));
     obstacle_array.push_back(wall);
 }
 
@@ -52,6 +69,10 @@ void Map::CreateAngledWall(b2World& world, std::vector<Obstacle>& obstacle_array
 
     wall.body = world.CreateBody(&bodydef);
     wall.body->CreateFixture(&wall.fixturedef);
+
+    wall.sprite.setTexture(dirt_texture);
+    wall.sprite.setOrigin(wall.rect.getLocalBounds().width / 2, wall.rect.getLocalBounds().height / 2);
+    wall.sprite.setTextureRect(sf::IntRect(0, 0, wall.rect.getLocalBounds().width, wall.rect.getLocalBounds().height));
     obstacle_array.push_back(wall);
 }
 
@@ -95,6 +116,7 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
  
     Spring spring;
     spring.rect.setPosition(sf::Vector2f(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/12));
+    // spring.sprite.setTextureRect(sf::IntRect(0, 0, spring.rect.getLocalBounds().width, spring.rect.getLocalBounds().height));
     spring_array.push_back(spring);
 
     GenerateBorders(world, obstacle_array);

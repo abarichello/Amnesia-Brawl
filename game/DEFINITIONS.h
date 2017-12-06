@@ -1,7 +1,8 @@
 static const int GAME_WIDTH  = 1100;
 static const int GAME_HEIGHT = 700;
 
-// SFML uses pixels as coordinates while Box2D uses meters,
+// SFML uses pixels as coordinates while Box2D uses meters, this scale constant
+// is used to convert between these two systems.
 static const float SCALE = 30;
 
 static const float HITBOX_X = 25.f;
@@ -12,6 +13,9 @@ static const float ROUND_TIME = 180.f;
 
 // TEXTURES
 #define PLAYER_TEXTURE      "media/textures/player_texture.png"
+#define GRASS_TEXTURE       "media/textures/grass.png"
+#define DIRT_TEXTURE        "media/textures/dirt.png"
+#define SPRING_TEXTURE      "media/textures/spring.png"
 
 // FONTS
 #define HUD_FONT            "media/fonts/hud_font.ttf"

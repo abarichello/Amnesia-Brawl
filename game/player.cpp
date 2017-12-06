@@ -28,7 +28,7 @@ Player::~Player() {
 void Player::Draw(sf::RenderWindow& window) {
     // window.draw(rect);
     // window.draw(rectA);
-    // window.draw(rectB);
+    // window.draw(rectB); // DEBUG
     window.draw(sprite);
 }
 
