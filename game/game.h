@@ -16,7 +16,7 @@ public:
     Game();
     void Start();
     void LoadResources();
-    void CreateRound(std::size_t players_num, std::size_t level_number, b2World& world, std::vector<Obstacle>& obstacle_array);
+    void CreateRound(std::size_t players_num, std::size_t level_number, b2World& world);
     void LoadPlayers(std::size_t number_of_players);
     void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
@@ -62,7 +62,6 @@ public:
     sf::Music background_music;
 
     std::vector<Player*> player_array;
-    std::vector<Obstacle> obstacle_array;
     std::vector<PowerUp> powerup_array;
     std::vector<b2Vec2> spawn_locations;
 

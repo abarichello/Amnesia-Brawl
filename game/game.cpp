@@ -48,7 +48,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
                     global_clock.restart(); // Restart main clock
                     game_state = GameState::STATE_PLAY; // DEBUG
-                    CreateRound(4, 1, world, obstacle_array);
+                    CreateRound(4, 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                 }
 
@@ -96,13 +96,13 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
     while (itr != _game_object_manager._game_objects.end()) {
         itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
         itr->second->rect.setRotation(itr->second->body->GetAngle() * 180 / b2_pi);
-        itr->second->Update(elapsed_time, obstacle_array);
+        itr->second->Update(elapsed_time, map->obstacle_array);
         itr->second->Draw(window);
         itr++;
     }
 
-    // Update walls
-    for (auto wall : obstacle_array) {
+    // Draw map
+    for (auto wall : map->obstacle_array) {
         wall.sprite.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
         wall.sprite.setRotation(wall.body->GetAngle() * 180 / b2_pi);
         window.draw(wall.sprite);
@@ -216,10 +216,10 @@ void Game::TitleScreen(sf::RenderWindow& window) {
     title_screen->Draw(window);
 }
 
-void Game::CreateRound(std::size_t players_num, std::size_t level_number, b2World& world, std::vector<Obstacle>& obstacle_array) {
+void Game::CreateRound(std::size_t players_num, std::size_t level_number, b2World& world) {
     LoadPlayers(players_num);
     hud = new HUD(players_num);
-    map = new Map(level_number, world, obstacle_array);
+    map = new Map(level_number, world);
 }
 
 void Game::LoadPlayers(std::size_t number_of_players) {

@@ -57,6 +57,7 @@ void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float cou
     auto seconds = std::to_string((int)countdown % 60);
     if (std::stoi(seconds) < 10) {
         seconds = "0" + seconds;
+        match_clock.setFillColor(sf::Color(227, 12, 18));
     }
 
     if (countdown < 0) {
