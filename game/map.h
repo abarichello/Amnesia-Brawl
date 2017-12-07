@@ -23,5 +23,6 @@ private:
     void LoadLevel3(b2World& world, std::vector<Obstacle>& obstacle_array);
 
     sf::Texture neon_texture;
+    sf::Texture fog_texture;
     sf::Texture spring_texture;
 };

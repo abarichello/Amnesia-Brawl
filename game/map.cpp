@@ -9,9 +9,14 @@ Map::Map(std::size_t level_number, b2World& world, std::vector<Obstacle>& obstac
     if (!spring_texture.loadFromFile(SPRING_TEXTURE)) {
         std::cout << "Error loading spring texture" << "\n";
     }
+    if (!fog_texture.loadFromFile(FOG_TEXTURE)) {
+        std::cout << "Error loading fog texture" << "\n";
+    }
 
     neon_texture.setRepeated(true);
     neon_texture.setSmooth(true);
+    fog_texture.setRepeated(true);
+    fog_texture.setSmooth(true);
     
     switch(level_number) {
         case 1:
@@ -46,9 +51,16 @@ void Map::CreateWall(b2World& world, std::vector<Obstacle>& obstacle_array, int 
     wall.body->CreateFixture(&wall.fixturedef);
 
     // Sprites
-    wall.sprite.setTexture(texture);
     wall.sprite.setOrigin(wall.rect.getLocalBounds().width / 2, wall.rect.getLocalBounds().height / 2);
     wall.sprite.setTextureRect(sf::IntRect(0, 0, wall.rect.getLocalBounds().width, wall.rect.getLocalBounds().height));
+    if (is_ground) {
+        sf::Color color(50 + GenerateRandom(206), 50 + GenerateRandom(206), 50 + GenerateRandom(206));
+        wall.sprite.setTexture(texture);
+        wall.sprite.setColor(color);
+    } else {
+        wall.sprite.setTexture(texture);
+        wall.sprite.setColor(sf::Color::White);
+    }
     obstacle_array.push_back(wall);
 }
 
@@ -75,9 +87,16 @@ void Map::CreateAngledWall(b2World& world, std::vector<Obstacle>& obstacle_array
     wall.body->CreateFixture(&wall.fixturedef);
 
     // Texture
-    wall.sprite.setTexture(texture);
     wall.sprite.setOrigin(wall.rect.getLocalBounds().width / 2, wall.rect.getLocalBounds().height / 2);
     wall.sprite.setTextureRect(sf::IntRect(0, 0, wall.rect.getLocalBounds().width, wall.rect.getLocalBounds().height));
+    if (is_ground) {
+        sf::Color color(50 + GenerateRandom(206), 50 + GenerateRandom(206), 50 + GenerateRandom(206));
+        wall.sprite.setTexture(neon_texture);
+        wall.sprite.setColor(color);
+    } else {
+        wall.sprite.setTexture(texture);
+        wall.sprite.setColor(sf::Color::White);
+    }
     obstacle_array.push_back(wall);
 }
 
@@ -106,10 +125,10 @@ void Map::ClearMap(std::vector<Obstacle>& obstacle_array) {
 void Map::GenerateBorders(b2World& world, std::vector<Obstacle>& obstacle_array, sf::Texture& texture) {
     //         World                         posX              posY         sizeX           sizeY  ground?
     // Boundaries
-    CreateWall(world, obstacle_array, GAME_WIDTH/2,    GAME_HEIGHT,    GAME_WIDTH, GAME_HEIGHT/40,  true, neon_texture); // Ground
-    CreateWall(world, obstacle_array,            0,  GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT,  true, neon_texture); // Left wall
-    CreateWall(world, obstacle_array,   GAME_WIDTH,  GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT,  true, neon_texture); // Right wall
-    CreateWall(world, obstacle_array, GAME_WIDTH/2,              0,    GAME_WIDTH, GAME_HEIGHT/40, false, neon_texture); // Ceiling
+    CreateWall(world, obstacle_array, GAME_WIDTH/2,    GAME_HEIGHT,    GAME_WIDTH, GAME_HEIGHT/40,  true, texture); // Ground
+    CreateWall(world, obstacle_array,            0,  GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT, false, texture); // Left wall
+    CreateWall(world, obstacle_array,   GAME_WIDTH,  GAME_HEIGHT/2, GAME_WIDTH/40,    GAME_HEIGHT, false, texture); // Right wall
+    CreateWall(world, obstacle_array, GAME_WIDTH/2,              0,    GAME_WIDTH, GAME_HEIGHT/40, false, texture); // Ceiling
 }
 
 // NIGHT CLUB
@@ -131,7 +150,7 @@ void Map::LoadLevel1(b2World& world, std::vector<Obstacle>& obstacle_array) {
  
     CreateSpring(obstacle_array, GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/18, 0);
 
-    GenerateBorders(world, obstacle_array, neon_texture);
+    GenerateBorders(world, obstacle_array, fog_texture);
 }
 
 void Map::LoadLevel2(b2World& world, std::vector<Obstacle>& obstacle_array) {
