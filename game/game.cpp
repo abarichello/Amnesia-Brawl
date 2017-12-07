@@ -48,7 +48,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
                     global_clock.restart(); // Restart main clock
                     game_state = GameState::STATE_PLAY; // DEBUG
-                    CreateRound(4, 3, world, obstacle_array);
+                    CreateRound(4, 1, world, obstacle_array);
                     countdown = ROUND_TIME;
                 }
 

@@ -1,25 +1,26 @@
 #include "powerup.h"
 
 PowerUp::PowerUp() {
-    rect.setSize(sf::Vector2f(25.f, 25.f));
+    rect.setSize(sf::Vector2f(50.f, 50.f));
     rect.setOrigin(rect.getLocalBounds().width / 2, rect.getLocalBounds().height / 2);
 
     /* Effects:
-    1.  Invisibility
-    2.  Speed
-    3.  RAGE MODE (Immunity + death on touch)
-    4.  Float mode
-    5.  Immunity
+    1.  Invisibility - Tequila
+    2.  Speed - Açaí
+    3.  RAGE MODE (Immunity + death on touch) - Vodka
+    4.  Float mode - Absinto
+    5.  Immunity - Beer
     */
 
-    effect = GenerateRandom(4);
-    // effect = 2;
+    // effect = GenerateRandom(4);
+    effect = 5;
     switch (effect) {
         case 1:
             rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility
             break;
         case 2:
             rect.setFillColor(sf::Color(0, 100, 200)); // Speed
+            Load(ACAI_TEXTURE);
             break;
         case 3:
             rect.setFillColor(sf::Color(155, 10, 10)); // RAGE MODE
@@ -29,8 +30,12 @@ PowerUp::PowerUp() {
             break;
         case 5:
             rect.setFillColor(sf::Color(255, 239, 0)); // Immunity
+            Load(BEER_TEXTURE);
             break;
     }
+
+    sprite.setOrigin(rect.getLocalBounds().width / 2, rect.getLocalBounds().height / 2);
+    sprite.setTextureRect(sf::IntRect(0, 0, rect.getLocalBounds().width, rect.getLocalBounds().height));
 }
 
 void PowerUp::Invisibility(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -78,12 +83,11 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
 }
 
 void PowerUp::Update(float countdown) {
-    rect.setRotation(countdown * rotation);
-
+    rect.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y + std::sin(countdown * 3) * floating_effect)); // Floating effect
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 }
 
 void PowerUp::Draw(sf::RenderWindow& window) {
-    window.draw(rect);
+    window.draw(sprite);
 }
