@@ -15,4 +15,5 @@ private:
     sf::Text game_title;
     sf::Text game_subtitle;
     sf::Text press_space;
+    sf::Text barichello;
 };

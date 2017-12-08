@@ -16,6 +16,7 @@ static const float ROUND_TIME = 180.f;
 #define NEON_TEXTURE        "media/textures/block.png"
 #define SPRING_TEXTURE      "media/textures/spring.png"
 #define FOG_TEXTURE         "media/textures/fog.png"
+#define AMNESIA_LOGO        "media/textures/amnesia.png"
 
 #define ACAI_TEXTURE        "media/textures/acai.png"
 #define BEER_TEXTURE        "media/textures/beer.png"

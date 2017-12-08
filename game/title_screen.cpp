@@ -35,6 +35,13 @@ TitleScreen::TitleScreen() {
     press_space.setString("PRESS SPACE");
     press_space.setOrigin(press_space.getLocalBounds().width / 2, press_space.getLocalBounds().height / 2);
     press_space.setPosition(GAME_WIDTH / 2, GAME_HEIGHT - GAME_HEIGHT/4);
+
+    barichello.setFont(square_font);
+    barichello.setFillColor(sf::Color(255, 205, 0));
+    barichello.setCharacterSize(20);
+    barichello.setString("Barichello");
+    barichello.setOrigin(barichello.getLocalBounds().width / 2, barichello.getLocalBounds().height / 2);
+    barichello.setPosition(GAME_WIDTH - barichello.getLocalBounds().width / 2, GAME_HEIGHT - barichello.getLocalBounds().height);
 }
 
 void TitleScreen::Draw(sf::RenderWindow& window) {
@@ -43,6 +50,7 @@ void TitleScreen::Draw(sf::RenderWindow& window) {
     window.draw(game_title);
     window.draw(game_subtitle);
     window.draw(press_space);
+    window.draw(barichello);
 
     window.display();
 }

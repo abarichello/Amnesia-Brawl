@@ -82,7 +82,6 @@ void Game::Start() {
 }
 
 void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
-    // TODO FIX POWERUP CLOCK INCONSISTENCIES
     // GAME LOOP
     // Delta time between frames
     sf::Time elapsed_time = global_clock.restart();
@@ -91,6 +90,9 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
     world.Step(1.f/60.f, 10, 10);
     window.clear();
 
+    // Draw map
+    map->Draw(window);
+    
     // Update players
     std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
@@ -100,14 +102,7 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
         itr->second->Draw(window);
         itr++;
     }
-
-    // Draw map
-    for (auto wall : map->obstacle_array) {
-        wall.sprite.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
-        wall.sprite.setRotation(wall.body->GetAngle() * 180 / b2_pi);
-        window.draw(wall.sprite);
-    }
-
+    
     // Update springs
     itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
