@@ -1,3 +1,5 @@
+#pragma once
+
 #include "stdafx.h"
 #include "obstacle.h"
 #include "spring.h"
@@ -7,6 +9,7 @@ public:
     Map();
     Map(std::size_t level_number, b2World& world);
     void Draw(sf::RenderWindow& window);
+    void Draw(sf::RenderTexture& texture);
 
     void CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground, sf::Texture& texture, sf::Color color);
     void CreateAngledWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground, size_t angle, float friction, sf::Texture& texture, sf::Color color);

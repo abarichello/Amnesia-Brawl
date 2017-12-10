@@ -8,6 +8,7 @@
 #include "powerup.h"
 #include "map.h"
 #include "title_screen.h"
+#include "level_select.h"
 
 #include <utility>
 
@@ -21,7 +22,8 @@ public:
     void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
-    void TitleScreen(sf::RenderWindow& window);
+    void TitleScreen();
+    void LevelSelect();
     void GameLoop(float& countdown, sf::Clock& powerup_clock);
 
     void WinnerCheck();
@@ -46,6 +48,7 @@ public:
     b2World world;
     HUD* hud;
     class TitleScreen* title_screen;
+    class LevelSelect* levelselect;
     
     Player* player1;
     Player* player2;

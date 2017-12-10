@@ -9,7 +9,7 @@ static const float HITBOX_X = 25.f;
 static const float HITBOX_Y = 5.f;
 
 // static const float ROUND_TIME = 10.f; // DEBUG
-static const float ROUND_TIME = 1.f;
+static const float ROUND_TIME = 180.f;
 
 // TEXTURES
 #define PLAYER_TEXTURE      "media/textures/player_texture.png"
@@ -28,6 +28,7 @@ static const float ROUND_TIME = 1.f;
 #define SQUARE_FONT         "media/fonts/squarefont.ttf"
 #define LINE_BRK_FONT       "media/fonts/line_brk.ttf"
 #define ARIEL_PIXEL_FONT    "media/fonts/ariel_pixel.ttf"
+#define BANKSIA_FONT        "media/fonts/banksia.ttf"
 
 // AUDIO
 #define BACKGROUND_SONG     "media/audio/fishing.wav"

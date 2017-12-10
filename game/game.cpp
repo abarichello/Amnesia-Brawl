@@ -7,6 +7,7 @@ Game::Game():
     world(gravity) {
 
     title_screen = new class TitleScreen();
+    levelselect = new class LevelSelect();
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -41,14 +42,23 @@ void Game::Start() {
                 }
 
             } else if (game_state == GameState::STATE_LEVEL_SELECT) {
+                // TODO manage deletion and creation of levelselect
 
+                std::cout << levelselect->selection << "\n";
+                std::cout << levelselect->selection % 3 + 1 << "mod" << "\n";
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_TITLE;
                 }
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
+                    levelselect->selection += 1;
+                }
+                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
+                    levelselect->selection -= 1;
+                }
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
                     global_clock.restart(); // Restart main clock
-                    game_state = GameState::STATE_PLAY; // DEBUG
-                    CreateRound(4, 3, world); // Number of players / Map number / world
+                    game_state = GameState::STATE_PLAY;
+                    CreateRound(4, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                 }
 
@@ -72,7 +82,10 @@ void Game::Start() {
 
         switch (game_state) {
             case STATE_TITLE:
-                TitleScreen(window);
+                TitleScreen();
+                break;
+            case STATE_LEVEL_SELECT:
+                LevelSelect();
                 break;
             case STATE_PLAY:
                 GameLoop(countdown, powerup_clock);
@@ -207,8 +220,12 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
     window.display();
 }
 
-void Game::TitleScreen(sf::RenderWindow& window) {
+void Game::TitleScreen() {
     title_screen->Draw(window);
+}
+
+void Game::LevelSelect() {
+    levelselect->Draw(window);
 }
 
 void Game::CreateRound(std::size_t players_num, std::size_t level_number, b2World& world) {
