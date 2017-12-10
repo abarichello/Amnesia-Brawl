@@ -22,7 +22,7 @@ Player::Player() {
 }
 
 Player::~Player() {
-    body->GetWorld()->DestroyBody(body);
+    // body->GetWorld()->DestroyBody(body);
 }
 
 void Player::Draw(sf::RenderWindow& window) {

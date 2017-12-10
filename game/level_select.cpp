@@ -40,18 +40,26 @@ LevelSelect::LevelSelect() {
     level3.setCharacterSize(35);
     level3.setString("Level 3 - Tequila Desert");
     level3.setPosition(GAME_WIDTH / 14, GAME_HEIGHT / 3  + level2.getLocalBounds().height * 2);
+
+    text_array.push_back(level1);
+    text_array.push_back(level2);
+    text_array.push_back(level3);
 }
 
 void LevelSelect::Update() {
+    for (auto i = 0u; i < text_array.size(); ++i) {
+        text_array[i].setFillColor(sf::Color::White);
+    }
 
+    text_array[selection % 3].setFillColor(sf::Color::Blue);
 }
 
 void LevelSelect::Draw(sf::RenderWindow& window) {
     window.clear();
 
-    window.draw(level1);
-    window.draw(level2);
-    window.draw(level3);
+    for (auto text : text_array) {
+        window.draw(text);
+    }
     window.draw(level_select);
 
     window.display();

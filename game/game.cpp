@@ -65,8 +65,10 @@ void Game::Start() {
             } else if (game_state == GameState::STATE_PLAY) {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                    window.close(); // DEBUG
-                    // game_state == GameState::STATE_PAUSE;
+                    game_state = GameState::STATE_LEVEL_SELECT; // DEBUG
+                    Cleanup();
+                    // window.close(); // DEBUG
+                    // game_state = GameState::STATE_PAUSE;
                 }
 
             } else if (game_state == GameState::STATE_PAUSE) {
@@ -225,6 +227,7 @@ void Game::TitleScreen() {
 }
 
 void Game::LevelSelect() {
+    levelselect->Update();
     levelselect->Draw(window);
 }
 
@@ -235,6 +238,7 @@ void Game::CreateRound(std::size_t players_num, std::size_t level_number, b2Worl
 }
 
 void Game::LoadPlayers(std::size_t number_of_players) {
+    // Create them again
     player1 = new Player();
     player2 = new Player();
     SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
@@ -250,6 +254,7 @@ void Game::LoadPlayers(std::size_t number_of_players) {
 }
 
 void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
+    // Player controls configurations
     player->number = number;
     player->jump = jump;
     player->left = left;
@@ -271,6 +276,7 @@ void Game::LoadResources() {
 }
 
 void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
+    // Creating physics body
     const float density = 1;
     player->bodydef.type = b2_dynamicBody;
     player->bodydef.position.Set(x / SCALE, y / SCALE);
@@ -341,10 +347,14 @@ void Game::ResetPowerups() {
 }
 
 void Game::Cleanup() {
+    // Function called while exiting a round
     delete map;
     auto i = 1;
+
+    // Delete players physics bodies
     std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
+        iter->second->body->GetWorld()->DestroyBody(iter->second->body);
         _game_object_manager.Remove(i);
         ++i;
         ++iter;

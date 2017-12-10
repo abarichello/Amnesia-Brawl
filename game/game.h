@@ -64,7 +64,6 @@ public:
     sf::SoundBuffer sound_buffer;
     sf::Music background_music;
 
-    std::vector<Player*> player_array;
     std::vector<PowerUp> powerup_array;
     std::vector<b2Vec2> spawn_locations;
 

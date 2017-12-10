@@ -13,7 +13,8 @@ public:
     sf::Font arial;
     sf::Font banksia;
 
-    std::size_t selection = 0;
+    int selection = 0;
+    std::vector<sf::Text> text_array;
 
 private:
     sf::Text level_select;

@@ -42,6 +42,13 @@ Map::Map(std::size_t level_number, b2World& world) {
     }
 }
 
+Map::~Map() {
+    for (auto wall : obstacle_array) {
+        obstacle_array.pop_back();
+        wall.body->GetWorld()->DestroyBody(wall.body);
+    }
+}
+
 void Map::Draw(sf::RenderWindow& window) {
     window.draw(background_sprite);
     window.draw(amnesia_logo);
@@ -142,12 +149,6 @@ void Map::CreateSpring(int posX, int posY, size_t angle) {
 void Map::DrawSprings(sf::RenderWindow& window) {
     for (auto spring : spring_array) {
         window.draw(spring.rect);
-    }
-}
-
-void Map::ClearMap() {
-    for (auto wall : obstacle_array) {
-        obstacle_array.pop_back();
     }
 }
 
