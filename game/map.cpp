@@ -20,13 +20,15 @@ Map::Map(std::size_t level_number, b2World& world) {
     amnesia_logo.setTexture(amnesia_texture);
     amnesia_logo.setScale(0.3f, 0.3f);
     amnesia_logo.setOrigin(amnesia_texture.getSize().x / 2, amnesia_texture.getSize().y / 2);
-    amnesia_logo.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    amnesia_logo.setPosition(GAME_WIDTH / 2, GAME_HEIGHT - GAME_HEIGHT / 3 - GAME_HEIGHT / 8);
 
     neon_texture.setRepeated(true);
     neon_texture.setSmooth(true);
     fog_texture.setRepeated(true);
     fog_texture.setSmooth(true);
-    
+
+    this->level_number = level_number;
+
     switch(level_number) {
         case 1:
             LoadLevel1(world); // NIGHT CLUB LEVEL
@@ -41,11 +43,17 @@ Map::Map(std::size_t level_number, b2World& world) {
 }
 
 void Map::Draw(sf::RenderWindow& window) {
+    window.draw(background_sprite);
     window.draw(amnesia_logo);
     for (auto wall : obstacle_array) {
         wall.sprite.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
         wall.sprite.setRotation(wall.body->GetAngle() * 180 / b2_pi);
         window.draw(wall.sprite);
+    }
+    
+    if (level_number == 1) {
+        pulse_variable += 1;
+        background_sprite.setColor(sf::Color(pulse_variable, pulse_variable, pulse_variable));
     }
 }
 
@@ -139,23 +147,34 @@ void Map::GenerateBorders(b2World& world, sf::Texture& texture) {
 
 // NIGHT CLUB
 void Map::LoadLevel1(b2World& world) {
+    // Background
+    degrade.create(GAME_WIDTH, GAME_HEIGHT);
+    for (auto i = 0; i < GAME_WIDTH; ++i) {
+        for (auto j = 0; j < GAME_HEIGHT; ++j) {
+            sf::Color color(256, 256, i / 9);
+            degrade.setPixel(i, j, color);
+        }
+    }
+    background_texture.loadFromImage(degrade);
+    background_sprite.setTexture(background_texture);
+
     // Platforms
     //         World                                        posX                           posY         sizeX           sizeY  ground?
-    sf::Color color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    sf::Color color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,  GAME_HEIGHT/2 - GAME_HEIGHT/4, GAME_WIDTH/10, GAME_HEIGHT/30, true, neon_texture, color); // Upper left platform
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,                GAME_WIDTH/2,  GAME_HEIGHT/2 - GAME_HEIGHT/5,  GAME_WIDTH/5, GAME_HEIGHT/30, true, neon_texture, color); // Upper middle platform
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,                GAME_WIDTH/2,  GAME_HEIGHT/2 + GAME_HEIGHT/4,  GAME_WIDTH/5, GAME_HEIGHT/25, true, neon_texture, color); // Middle middle platform
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/40,  GAME_HEIGHT/2 - GAME_HEIGHT/4,  GAME_WIDTH/4, GAME_HEIGHT/25, true, neon_texture, color); // Upper right stub
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,   GAME_WIDTH - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/20,  GAME_WIDTH/7, GAME_HEIGHT/25, true, neon_texture, color); // Middle right floating
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/20,    GAME_HEIGHT - GAME_HEIGHT/3,  GAME_WIDTH/9, GAME_HEIGHT/30, true, neon_texture, color); // Middle right stub
     
     //         World                                              posX                           posY         sizeX              sizeY   grnd angle friction
-    color = sf::Color(100 + GenerateRandom(156), 100 + GenerateRandom(156), 100 + GenerateRandom(156));
+    color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateAngledWall(world, GAME_WIDTH/2 - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/33,  true,   7, 1.f, neon_texture, color); // Middle left platform
     CreateAngledWall(world, GAME_WIDTH/2 + GAME_WIDTH/3,                    GAME_HEIGHT,  GAME_WIDTH/2,  GAME_HEIGHT/6,  true, 350, 5.f, neon_texture, color); // Lower right rectangle
     CreateAngledWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f, neon_texture, color); // Fat lower left platform
@@ -172,6 +191,9 @@ void Map::LoadLevel2(b2World& world) {
 
 // 
 void Map::LoadLevel3(b2World& world) {
+    background_texture.loadFromFile(DESERT_TEXTURE);
+    background_sprite.setTexture(background_texture);
+
     // Platforms
     //         World                                        posX                           posY            sizeX           sizeY  ground?
     sf::Color color = sf::Color(255, 205, 0);

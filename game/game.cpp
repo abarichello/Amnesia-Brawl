@@ -48,7 +48,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
                     global_clock.restart(); // Restart main clock
                     game_state = GameState::STATE_PLAY; // DEBUG
-                    CreateRound(4, 1, world); // Number of players / Map number / world
+                    CreateRound(4, 3, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                 }
 
@@ -289,6 +289,25 @@ void Game::WinnerCheck() {
     // Center view to winner
     sf::View winner_view;
     winner_view.setSize(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+
+    float halfviewX = GAME_WIDTH / 2 * 0.5f;
+    float halfviewY = GAME_HEIGHT / 2 * 0.5f;
+
+    // Keep the camera inbounds
+    // X Axis
+    if (winner->rect.getPosition().x < halfviewX) {
+        winner->rect.setPosition(halfviewX, winner->rect.getPosition().y);
+    } else if (winner->rect.getPosition().x > GAME_WIDTH - halfviewX) {
+        winner->rect.setPosition(GAME_WIDTH - halfviewX, winner->rect.getPosition().y);
+    }
+    
+    // Y Axis
+    if (winner->rect.getPosition().y < halfviewY) {
+        winner->rect.setPosition(winner->rect.getPosition().x, halfviewY);
+    } else if (winner->rect.getPosition().y > GAME_HEIGHT - halfviewY) {
+        winner->rect.setPosition(winner->rect.getPosition().x, GAME_HEIGHT - halfviewY);
+    }
+
     winner_view.setCenter(winner->rect.getPosition());
     window.setView(winner_view);
 }

@@ -15,19 +15,27 @@ public:
     void DrawSprings(sf::RenderWindow& window);
 
     float win_screen_countdown = 7.f;
+    std::size_t level_number;
+
     std::vector<Obstacle> obstacle_array;
     std::vector<Spring> spring_array;
     
 private:
+    std::size_t pulse_variable = 0;
+
     void GenerateBorders(b2World& world, sf::Texture& texture);
     void LoadLevel1(b2World& world);
     void LoadLevel2(b2World& world);
     void LoadLevel3(b2World& world);
+    
+    sf::Image degrade;
 
+    sf::Texture background_texture;
     sf::Texture amnesia_texture;
     sf::Texture neon_texture;
     sf::Texture fog_texture;
     sf::Texture spring_texture;
-
+    
+    sf::Sprite background_sprite;
     sf::Sprite amnesia_logo;
 };

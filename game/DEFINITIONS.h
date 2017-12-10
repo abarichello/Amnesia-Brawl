@@ -9,7 +9,7 @@ static const float HITBOX_X = 25.f;
 static const float HITBOX_Y = 5.f;
 
 // static const float ROUND_TIME = 10.f; // DEBUG
-static const float ROUND_TIME = 180.f;
+static const float ROUND_TIME = 1.f;
 
 // TEXTURES
 #define PLAYER_TEXTURE      "media/textures/player_texture.png"
@@ -17,6 +17,7 @@ static const float ROUND_TIME = 180.f;
 #define SPRING_TEXTURE      "media/textures/spring.png"
 #define FOG_TEXTURE         "media/textures/fog.png"
 #define AMNESIA_LOGO        "media/textures/amnesia.png"
+#define DESERT_TEXTURE      "media/textures/desert.png"
 
 #define ACAI_TEXTURE        "media/textures/acai.png"
 #define BEER_TEXTURE        "media/textures/beer.png"
