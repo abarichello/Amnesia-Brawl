@@ -12,8 +12,8 @@ PowerUp::PowerUp() {
     5.  Immunity - Beer
     */
 
-    effect = GenerateRandom(4);
-    // effect = 4; // DEBUG
+    // effect = GenerateRandom(4);
+    effect = 5; // DEBUG
     switch (effect) {
         case 1:
             rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility - Tequila
@@ -64,6 +64,7 @@ void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
 
 void PowerUp::Immunity(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
+    iter->second->sprite.setTexture(iter->second->immune_texture);
 }
 
 void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -83,6 +84,8 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     iter->second->rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     iter->second->rectB.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     iter->second->rectB.setOrigin(iter->second->rectB.getLocalBounds().width / 2, iter->second->rectB.getLocalBounds().height / 2);
+
+    iter->second->sprite.setTexture(iter->second->default_texture);
 }
 
 void PowerUp::Update(float countdown) {

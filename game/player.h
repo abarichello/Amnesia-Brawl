@@ -24,6 +24,8 @@ public:
 
     sf::Clock jump_clock;
 
+    sf::Texture default_texture;
+    sf::Texture immune_texture;
     sf::RectangleShape rectA;
     sf::RectangleShape rectB;
     sf::Keyboard::Key jump;

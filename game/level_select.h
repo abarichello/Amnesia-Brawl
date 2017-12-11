@@ -13,7 +13,7 @@ public:
     sf::Font arial;
     sf::Font banksia;
 
-    int selection = 0;
+    int selection = 900;
     std::vector<sf::Text> text_array;
 
 private:

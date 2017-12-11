@@ -306,7 +306,6 @@ void Game::WinnerCheck() {
     hud->winner_text.setOrigin(hud->winner_text.getLocalBounds().width / 2, hud->winner_text.getLocalBounds().height / 2);
     hud->winner_text.setPosition(winner->rect.getPosition().x, winner->rect.getPosition().y - 100);
     hud->winner_text.setString("Player  " + std::to_string(winner->number) + "  wins!");
-    // TODO add amnesia logo
     window.draw(hud->winner_text);
 
     // Center view to winner
@@ -360,6 +359,7 @@ void Game::EndRound() {
         ++i;
         ++iter;
     }
+    window.setView(game_view);    
 }
 
 GameObjectManager Game::_game_object_manager;

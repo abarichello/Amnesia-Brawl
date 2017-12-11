@@ -2,8 +2,12 @@
 #include "player.h"
 
 Player::Player() {
-    Load(PLAYER_TEXTURE);
-    assert(loaded);
+    if (!default_texture.loadFromFile(PLAYER_TEXTURE)) {
+        std::cout << "Error loading player default texture" << "\n";
+    }
+    if (!immune_texture.loadFromFile(IMMUNITY_TEXTURE)) {
+        std::cout << "Error loading immune player texture" << "\n";
+    }
 
     rect.setSize(sf::Vector2f(48.f, 48.f));
     rect.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 2);
@@ -11,6 +15,7 @@ Player::Player() {
     rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
 
     sprite.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
+    sprite.setTexture(default_texture);
 
     rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     rectA.setOrigin(rectA.getLocalBounds().width / 2, rectA.getLocalBounds().height / 2);
