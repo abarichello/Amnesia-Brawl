@@ -21,6 +21,9 @@ static const float ROUND_TIME = 180.f;
 
 #define ACAI_TEXTURE        "media/textures/acai.png"
 #define BEER_TEXTURE        "media/textures/beer.png"
+#define VODKA_TEXTURE       "media/textures/vodka.png"
+#define ABSINTO_TEXTURE     "media/textures/absinto.png"
+#define TEQUILA_TEXTURE     "media/textures/tequila.png"
 
 // FONTS
 #define HUD_FONT            "media/fonts/hud_font.ttf"

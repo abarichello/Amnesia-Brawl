@@ -12,24 +12,27 @@ PowerUp::PowerUp() {
     5.  Immunity - Beer
     */
 
-    // effect = GenerateRandom(4);
-    effect = 5;
+    effect = GenerateRandom(4);
+    // effect = 4; // DEBUG
     switch (effect) {
         case 1:
-            rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility
+            rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility - Tequila
+            Load(TEQUILA_TEXTURE);
             break;
         case 2:
-            rect.setFillColor(sf::Color(0, 100, 200)); // Speed
+            rect.setFillColor(sf::Color(0, 100, 200)); // Speed - Açaí
             Load(ACAI_TEXTURE);
             break;
         case 3:
-            rect.setFillColor(sf::Color(155, 10, 10)); // RAGE MODE
+            rect.setFillColor(sf::Color(155, 10, 10)); // RAGE MODE - Vodka
+            Load(VODKA_TEXTURE);
             break;
         case 4:
-            rect.setFillColor(sf::Color(123, 184, 255)); // Floaty
+            rect.setFillColor(sf::Color(123, 184, 255)); // Floaty - Absinto
+            Load(ABSINTO_TEXTURE);
             break;
         case 5:
-            rect.setFillColor(sf::Color(255, 239, 0)); // Immunity
+            rect.setFillColor(sf::Color(255, 239, 0)); // Immunity - Beer
             Load(BEER_TEXTURE);
             break;
     }
@@ -51,8 +54,8 @@ void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
 
 void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
-    iter->second->rectB.setSize(sf::Vector2f(58, 70));
-    iter->second->rectB.setOrigin(sf::Vector2f(24, 48)); // set rectB position to the same of rect
+    iter->second->rectB.setSize(sf::Vector2f(64, 110)); // Some magic numbers
+    iter->second->rectB.setOrigin(sf::Vector2f(32, 80)); // set rectB position to the same of rect
 }
 
 void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -83,6 +86,7 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
 }
 
 void PowerUp::Update(float countdown) {
+    rect.setRotation(countdown * rotation);
     rect.setPosition(sf::Vector2f(rect.getPosition().x, rect.getPosition().y + std::sin(countdown * 3) * floating_effect)); // Floating effect
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());

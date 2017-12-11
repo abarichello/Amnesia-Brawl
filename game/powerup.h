@@ -17,6 +17,8 @@ public:
     static void ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator& iter);
 
     float floating_effect = 7.f;
+    float rotation = 50.f;
+
     std::size_t effect;
     bool alive = true;
 };

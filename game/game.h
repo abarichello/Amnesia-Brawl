@@ -28,7 +28,7 @@ public:
 
     void WinnerCheck();
     void ResetPowerups();
-    void Cleanup();
+    void EndRound();
 
     sf::RenderWindow window;
     sf::View game_view;

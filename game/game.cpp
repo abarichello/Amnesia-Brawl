@@ -42,10 +42,7 @@ void Game::Start() {
                 }
 
             } else if (game_state == GameState::STATE_LEVEL_SELECT) {
-                // TODO manage deletion and creation of levelselect
 
-                std::cout << levelselect->selection << "\n";
-                std::cout << levelselect->selection % 3 + 1 << "mod" << "\n";
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_TITLE;
                 }
@@ -55,7 +52,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
                     levelselect->selection -= 1;
                 }
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
+                if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
                     global_clock.restart(); // Restart main clock
                     game_state = GameState::STATE_PLAY;
                     CreateRound(4, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
@@ -66,7 +63,7 @@ void Game::Start() {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_LEVEL_SELECT; // DEBUG
-                    Cleanup();
+                    EndRound();
                     // window.close(); // DEBUG
                     // game_state = GameState::STATE_PAUSE;
                 }
@@ -144,7 +141,7 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
     }
 
     // Powerup generation
-    if (powerup_clock.getElapsedTime().asSeconds() > 5.f && powerup_array.size() == 0 && countdown > 0) {
+    if (powerup_clock.getElapsedTime().asSeconds() > 7.f && powerup_array.size() == 0 && countdown > 0) {
         powerup_clock.restart();
         PowerUp powerup;
         powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
@@ -213,8 +210,8 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
             map->win_screen_countdown -= elapsed_time.asSeconds();
             if (map->win_screen_countdown <= 0) {
                 window.setView(game_view);
-                Cleanup();
-                game_state = GameState::STATE_TITLE;
+                EndRound();
+                game_state = GameState::STATE_LEVEL_SELECT;
             }
         }
     }
@@ -346,7 +343,7 @@ void Game::ResetPowerups() {
     }
 }
 
-void Game::Cleanup() {
+void Game::EndRound() {
     // Function called while exiting a round
     delete map;
     auto i = 1;
