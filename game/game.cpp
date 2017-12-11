@@ -7,7 +7,6 @@ Game::Game():
     world(gravity) {
 
     title_screen = new class TitleScreen();
-    levelselect = new class LevelSelect();
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
@@ -34,16 +33,19 @@ void Game::Start() {
 
             if (game_state == GameState::STATE_TITLE) {
                 
-                powerup_clock.restart();
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+                    levelselect = new class LevelSelect();
+                    delete title_screen;
                     game_state = GameState::STATE_LEVEL_SELECT;
                 }
 
             } else if (game_state == GameState::STATE_LEVEL_SELECT) {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    title_screen = new class TitleScreen();
+                    delete levelselect;
                     game_state = GameState::STATE_TITLE;
                 }
                 if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
@@ -54,18 +56,18 @@ void Game::Start() {
                 }
                 if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
                     global_clock.restart(); // Restart main clock
-                    game_state = GameState::STATE_PLAY;
+                    powerup_clock.restart(); // Restart powerup clock
                     CreateRound(4, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
+                    game_state = GameState::STATE_PLAY;
                 }
 
             } else if (game_state == GameState::STATE_PLAY) {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_LEVEL_SELECT; // DEBUG
-                    EndRound();
-                    // window.close(); // DEBUG
                     // game_state = GameState::STATE_PAUSE;
+                    EndRound();
                 }
 
             } else if (game_state == GameState::STATE_PAUSE) {
@@ -74,6 +76,7 @@ void Game::Start() {
                     game_state = GameState::STATE_PLAY;
                 } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
                     game_state = GameState::STATE_LEVEL_SELECT;
+                    EndRound();
                 }
 
             }
@@ -346,6 +349,7 @@ void Game::ResetPowerups() {
 void Game::EndRound() {
     // Function called while exiting a round
     delete map;
+    delete hud;
     auto i = 1;
 
     // Delete players physics bodies

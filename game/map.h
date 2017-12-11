@@ -22,7 +22,7 @@ public:
 
     std::vector<Obstacle> obstacle_array;
     std::vector<Spring> spring_array;
-    
+
 private:
     std::size_t pulse_variable = 0;
 
@@ -30,15 +30,16 @@ private:
     void LoadLevel1(b2World& world);
     void LoadLevel2(b2World& world);
     void LoadLevel3(b2World& world);
-    
+
     sf::Image degrade;
 
     sf::Texture background_texture;
     sf::Texture amnesia_texture;
     sf::Texture neon_texture;
+    sf::Texture desert_block_texture;
     sf::Texture fog_texture;
     sf::Texture spring_texture;
-    
+
     sf::Sprite background_sprite;
     sf::Sprite amnesia_logo;
 };
