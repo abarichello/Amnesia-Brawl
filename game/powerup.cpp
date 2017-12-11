@@ -12,8 +12,8 @@ PowerUp::PowerUp() {
     5.  Immunity - Beer
     */
 
-    // effect = GenerateRandom(4);
-    effect = 5; // DEBUG
+    effect = GenerateRandom(5);
+    // effect = 3; // DEBUG
     switch (effect) {
         case 1:
             rect.setFillColor(sf::Color(100, 100, 100)); // Invisibility - Tequila
@@ -43,7 +43,7 @@ PowerUp::PowerUp() {
 
 void PowerUp::Invisibility(std::map<std::size_t, Player*>::const_iterator& iter) {
     auto color = iter->second->sprite.getColor();
-    color.a = 95;
+    color.a = 70;
     iter->second->sprite.setColor(color);
 }
 
@@ -54,8 +54,12 @@ void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
 
 void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
-    iter->second->rectB.setSize(sf::Vector2f(64, 110)); // Some magic numbers
-    iter->second->rectB.setOrigin(sf::Vector2f(32, 80)); // set rectB position to the same of rect
+    iter->second->rectB.setSize(sf::Vector2f(70, 110)); // Some magic numbers
+    iter->second->rectB.setOrigin(sf::Vector2f(35, 100));
+    iter->second->fixturedef.friction = 9.f;
+    iter->second->max_speed = 4.f;
+
+    iter->second->sprite.setTexture(iter->second->inverted_texture);
 }
 
 void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -84,7 +88,10 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     iter->second->rectA.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     iter->second->rectB.setSize(sf::Vector2f(HITBOX_X, HITBOX_Y));
     iter->second->rectB.setOrigin(iter->second->rectB.getLocalBounds().width / 2, iter->second->rectB.getLocalBounds().height / 2);
+    iter->second->max_speed = 9.f;
+    iter->second->fixturedef.friction = 3.f;
 
+    // Reset sprite to default
     iter->second->sprite.setTexture(iter->second->default_texture);
 }
 

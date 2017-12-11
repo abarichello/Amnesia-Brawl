@@ -13,6 +13,7 @@ static const float ROUND_TIME = 180.f;
 
 // TEXTURES
 #define PLAYER_TEXTURE        "media/textures/player_texture.png"
+#define INVERTED_TEXTURE      "media/textures/inverted_player.png"
 #define IMMUNITY_TEXTURE      "media/textures/immunity.png"
 #define NEON_TEXTURE          "media/textures/block.png"
 #define DESERT_BLOCK_TEXTURE  "media/textures/desert_block.png"

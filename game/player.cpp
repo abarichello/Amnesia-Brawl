@@ -8,6 +8,9 @@ Player::Player() {
     if (!immune_texture.loadFromFile(IMMUNITY_TEXTURE)) {
         std::cout << "Error loading immune player texture" << "\n";
     }
+    if (!inverted_texture.loadFromFile(INVERTED_TEXTURE)) {
+        std::cout << "Error loading inverted player texture" << "\n";
+    }
 
     rect.setSize(sf::Vector2f(48.f, 48.f));
     rect.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 2);
@@ -38,7 +41,7 @@ void Player::Draw(sf::RenderWindow& window) {
 }
 
 void Player::Respawn() {
-    body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH) / SCALE, GenerateRandom(GAME_HEIGHT) / SCALE), 0);
+    body->SetTransform(b2Vec2(GenerateRandom(GAME_WIDTH - 50) / SCALE, GenerateRandom(GAME_HEIGHT - 50) / SCALE), 0);
     body->SetLinearVelocity(b2Vec2(0, -5));
     jumps_remaining = 1;
 }

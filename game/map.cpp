@@ -95,7 +95,7 @@ void Map::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, b
     wall.bodydef.type = b2_staticBody;
     wall.bodydef.position.Set(wall.rect.getPosition().x / SCALE, wall.rect.getPosition().y / SCALE);
     wall.fixturedef.shape = &wall.shape;
-    wall.fixturedef.density = 0.f;
+    wall.fixturedef.friction = 3.f;
     wall.shape.SetAsBox(wall.rect.getLocalBounds().width / 2 / SCALE, wall.rect.getLocalBounds().height / 2 / SCALE);
     
     // Creating physics body
@@ -193,9 +193,9 @@ void Map::LoadLevel1(b2World& world) {
     color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/20,    GAME_HEIGHT - GAME_HEIGHT/3,  GAME_WIDTH/9, GAME_HEIGHT/30, true, neon_texture, color); // Middle right stub
     
-    //         World                                              posX                           posY         sizeX              sizeY   grnd angle friction
+    //               World                         posX                           posY         sizeX             sizeY   grnd angle friction
     color = sf::Color(100 + GenerateRandom(100), 100 + GenerateRandom(100), 100 + GenerateRandom(100));
-    CreateAngledWall(world, GAME_WIDTH/2 - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/33,  true,   7, 1.f, neon_texture, color); // Middle left platform
+    CreateAngledWall(world, GAME_WIDTH/2 - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/33,  true,   7, 5.f, neon_texture, color); // Middle left platform
     CreateAngledWall(world, GAME_WIDTH/2 + GAME_WIDTH/3,                    GAME_HEIGHT,  GAME_WIDTH/2,  GAME_HEIGHT/6,  true, 350, 5.f, neon_texture, color); // Lower right rectangle
     CreateAngledWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f, neon_texture, color); // Fat lower left platform
     CreateAngledWall(world,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f, neon_texture, color); // Upper right angled border
@@ -225,10 +225,10 @@ void Map::LoadLevel3(b2World& world) {
     CreateWall(world, GAME_WIDTH/2 + GAME_WIDTH/8,                  GAME_HEIGHT/2,  GAME_WIDTH/7, GAME_HEIGHT/25,  true, desert_block_texture, color); // Middle right mini platform
     CreateWall(world,                GAME_WIDTH/2,                 -GAME_HEIGHT/3,    GAME_WIDTH, GAME_HEIGHT/25, false, desert_block_texture, color); // Upper platform outside screen
 
-    //         World                                            posX                           posY         sizeX               sizeY   grnd angle friction
+    //         World                             posX                           posY         sizeX              sizeY   grnd angle friction
     sf::Color color2 = sf::Color(200, 200, 0);
-    CreateAngledWall(world,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 0.1f, desert_block_texture, color2); // Lower left rectangle
-    CreateAngledWall(world, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 0.1f, desert_block_texture, color2); // Lower right rectangle
+    CreateAngledWall(world,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 2.f, desert_block_texture, color2); // Lower left rectangle
+    CreateAngledWall(world, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 2.f, desert_block_texture, color2); // Lower right rectangle
 
     CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 10);
     CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 350);

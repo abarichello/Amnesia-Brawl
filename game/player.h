@@ -26,6 +26,7 @@ public:
 
     sf::Texture default_texture;
     sf::Texture immune_texture;
+    sf::Texture inverted_texture;
     sf::RectangleShape rectA;
     sf::RectangleShape rectB;
     sf::Keyboard::Key jump;

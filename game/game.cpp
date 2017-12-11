@@ -281,6 +281,7 @@ void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
     player->bodydef.type = b2_dynamicBody;
     player->bodydef.position.Set(x / SCALE, y / SCALE);
     player->body = world.CreateBody(&player->bodydef);
+    player->fixturedef.friction = 1.f;
 
     // Width and height subtracted by one, so the rect can intersect with the ground
     player->shape.SetAsBox(23 / SCALE, 23 / SCALE); // Main player body
