@@ -14,7 +14,7 @@ public:
     sf::Font banksia;
 
     int selection = 900;
-    std::vector<sf::Text> text_array;
+    std::vector<sf::Text> level_text_array; // Texts in level selection
 
 private:
     sf::Text level_select;

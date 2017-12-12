@@ -37,16 +37,33 @@ void Game::Start() {
                     window.close();
                 } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
                     levelselect = new class LevelSelect();
+                    mode_select = new class ModeSelect();
                     delete title_screen;
+                    game_state = GameState::STATE_MODE_SELECT;
+                }
+
+            } else if (game_state == GameState::STATE_MODE_SELECT) {
+
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                    title_screen = new class TitleScreen();
+                    game_state = GameState::STATE_TITLE;
+                    delete levelselect;
+                    delete mode_select;
+                }
+                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
+                    mode_select->selection += 1;
+                }
+                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
+                    mode_select->selection -= 1;
+                }
+                if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
                     game_state = GameState::STATE_LEVEL_SELECT;
                 }
 
             } else if (game_state == GameState::STATE_LEVEL_SELECT) {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                    title_screen = new class TitleScreen();
-                    delete levelselect;
-                    game_state = GameState::STATE_TITLE;
+                    game_state = GameState::STATE_MODE_SELECT;
                 }
                 if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
                     levelselect->selection += 1;
@@ -57,7 +74,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
                     global_clock.restart(); // Restart main clock
                     powerup_clock.restart(); // Restart powerup clock
-                    CreateRound(4, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
+                    CreateRound(mode_select->selection % 4 + 2, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                     game_state = GameState::STATE_PLAY;
                 }
@@ -85,6 +102,9 @@ void Game::Start() {
         switch (game_state) {
             case STATE_TITLE:
                 TitleScreen();
+                break;
+            case STATE_MODE_SELECT:
+                ModeSelect();
                 break;
             case STATE_LEVEL_SELECT:
                 LevelSelect();
@@ -224,6 +244,11 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
 
 void Game::TitleScreen() {
     title_screen->Draw(window);
+}
+
+void Game::ModeSelect() {
+    mode_select->Update();
+    mode_select->Draw(window);
 }
 
 void Game::LevelSelect() {

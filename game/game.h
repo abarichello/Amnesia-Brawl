@@ -9,6 +9,7 @@
 #include "map.h"
 #include "title_screen.h"
 #include "level_select.h"
+#include "mode_select.h"
 
 #include <utility>
 
@@ -23,6 +24,7 @@ public:
     void CreatePlayer(b2World& world, Player* player, int x, int y);
 
     void TitleScreen();
+    void ModeSelect();
     void LevelSelect();
     void GameLoop(float& countdown, sf::Clock& powerup_clock);
 
@@ -37,6 +39,7 @@ public:
 
     enum GameState {
         STATE_TITLE,
+        STATE_MODE_SELECT,
         STATE_LEVEL_SELECT,
         STATE_PLAY,
         STATE_PAUSE
@@ -48,6 +51,7 @@ public:
     b2World world;
     HUD* hud;
     class TitleScreen* title_screen;
+    class ModeSelect* mode_select;
     class LevelSelect* levelselect;
     
     Player* player1;
