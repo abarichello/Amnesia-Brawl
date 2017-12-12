@@ -10,6 +10,8 @@ public:
     void Update();
     void Draw(sf::RenderWindow& window);
 
+    sf::Texture controls_texture;
+    sf::RectangleShape control_shape;
     sf::Font arial;
     sf::Font banksia;
 

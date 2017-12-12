@@ -1,19 +1,26 @@
 #include "level_select.h"
 
 LevelSelect::LevelSelect() {
+    if (!controls_texture.loadFromFile(CONTROLS_TEXTURE)) {
+        std::cout << "Error loading controls texture" << "\n";
+    }
     if(!arial.loadFromFile(ARIEL_PIXEL_FONT)) {
         std::cout << "Error loading arial font!" << "\n";
     }
     if(!banksia.loadFromFile(BANKSIA_FONT)) {
         std::cout << "Error loading banksia font!" << "\n";
     }
+    
+    control_shape.setTexture(&controls_texture);
+    control_shape.setSize(sf::Vector2f(400, 277));
+    control_shape.setPosition(GAME_WIDTH - control_shape.getLocalBounds().width, GAME_HEIGHT/2 - control_shape.getLocalBounds().height/2);
 
     level_select.setFont(arial);
     level_select.setOutlineColor(sf::Color::White);
     level_select.setOutlineThickness(3);
     level_select.setFillColor(sf::Color(227, 12, 18));
     level_select.setCharacterSize(45);
-    level_select.setString("Choose the map:");
+    level_select.setString("Choose the map");
     level_select.setOrigin(level_select.getLocalBounds().width / 2, level_select.getLocalBounds().height / 2);
     level_select.setPosition(GAME_WIDTH / 2, GAME_HEIGHT / 3 - GAME_HEIGHT / 6);
 
@@ -57,6 +64,7 @@ void LevelSelect::Update() {
 
 void LevelSelect::Draw(sf::RenderWindow& window) {
     window.clear();
+    window.draw(control_shape);
     for (auto text : level_text_array) {
         window.draw(text);
     }

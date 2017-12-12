@@ -26,7 +26,7 @@ public:
     void TitleScreen();
     void ModeSelect();
     void LevelSelect();
-    void GameLoop(float& countdown, sf::Clock& powerup_clock);
+    void GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_clock);
 
     void WinnerCheck();
     void ResetPowerups();
@@ -60,6 +60,8 @@ public:
     Player* player4;
     Map* map;
     
+    sf::Texture control_texture;
+    sf::RectangleShape control_shape;
     sf::Color amnesia_blue;
     sf::Color amnesia_red;
     sf::Color amnesia_dark_blue;

@@ -5,14 +5,6 @@ Game::Game():
     game_view(sf::FloatRect(0, 0, GAME_WIDTH, GAME_HEIGHT)),
     gravity(0.f, 18.f),
     world(gravity) {
-
-    title_screen = new class TitleScreen();
-
-    amnesia_blue = sf::Color(14, 77, 203);
-    amnesia_red = sf::Color(227, 12, 18);
-    amnesia_dark_blue = sf::Color(29, 12, 137);
-    amnesia_dark_red = sf::Color(158, 0, 0);
-
     LoadResources();
 }
 
@@ -32,7 +24,7 @@ void Game::Start() {
             }
 
             if (game_state == GameState::STATE_TITLE) {
-                
+
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
@@ -82,9 +74,9 @@ void Game::Start() {
             } else if (game_state == GameState::STATE_PLAY) {
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-                    game_state = GameState::STATE_LEVEL_SELECT; // DEBUG
-                    // game_state = GameState::STATE_PAUSE;
-                    EndRound();
+                    // game_state = GameState::STATE_MODE_SELECT;
+                    // EndRound(); // DEBUG
+                    game_state = GameState::STATE_PAUSE;
                 }
 
             } else if (game_state == GameState::STATE_PAUSE) {
@@ -92,7 +84,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_PLAY;
                 } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
-                    game_state = GameState::STATE_LEVEL_SELECT;
+                    game_state = GameState::STATE_MODE_SELECT;
                     EndRound();
                 }
 
@@ -109,25 +101,32 @@ void Game::Start() {
             case STATE_LEVEL_SELECT:
                 LevelSelect();
                 break;
-            case STATE_PLAY:
-                GameLoop(countdown, powerup_clock);
+            case STATE_PLAY: {
+                sf::Time elapsed_time = global_clock.restart();
+                GameLoop(elapsed_time, countdown, powerup_clock);
+                break;
+            }
+            case STATE_PAUSE:
+                global_clock.restart(); // Restart main clock
+                powerup_clock = powerup_clock; // Pause powerup clock
+                sf::Time pause_time = sf::seconds(0); // Freeze time
+                GameLoop(pause_time, countdown, powerup_clock);
                 break;
         }
     }
 }
 
-void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
+void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_clock) {
     // GAME LOOP
     // Delta time between frames
-    sf::Time elapsed_time = global_clock.restart();
     countdown -= elapsed_time.asSeconds();
 
-    world.Step(1.f/60.f, 10, 10);
+    world.Step(elapsed_time.asSeconds() * 1.4f, 10, 10);
     window.clear();
 
     // Draw map
     map->Draw(window);
-    
+
     // Update players
     std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
@@ -137,7 +136,7 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
         itr->second->Draw(window);
         itr++;
     }
-    
+
     // Update springs
     itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
@@ -234,11 +233,15 @@ void Game::GameLoop(float& countdown, sf::Clock& powerup_clock) {
             if (map->win_screen_countdown <= 0) {
                 window.setView(game_view);
                 EndRound();
-                game_state = GameState::STATE_LEVEL_SELECT;
+                game_state = GameState::STATE_MODE_SELECT;
             }
         }
     }
 
+    if (game_state == GameState::STATE_PAUSE) {
+        window.draw(control_shape); // Pause menu
+    }
+    
     window.display();
 }
 
@@ -290,11 +293,26 @@ void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::
 
 // Load game sprites
 void Game::LoadResources() {
+    if (!control_texture.loadFromFile(CONTROLS_TEXTURE)) {
+        std::cout << "Error loading controls texture" << "\n";
+    }
+
     // Default spawn locations
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/3, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
+
+    title_screen = new class TitleScreen();
+
+    amnesia_blue = sf::Color(14, 77, 203);
+    amnesia_red = sf::Color(227, 12, 18);
+    amnesia_dark_blue = sf::Color(29, 12, 137);
+    amnesia_dark_red = sf::Color(158, 0, 0);
+
+    control_shape.setTexture(&control_texture);
+    control_shape.setSize(sf::Vector2f(400, 277));
+    control_shape.setPosition(GAME_WIDTH - control_shape.getLocalBounds().width, GAME_HEIGHT/2 - control_shape.getLocalBounds().height/2);
 
     background_music.openFromFile(BACKGROUND_SONG);
     background_music.play();
@@ -348,7 +366,7 @@ void Game::WinnerCheck() {
     } else if (winner->rect.getPosition().x > GAME_WIDTH - halfviewX) {
         winner->rect.setPosition(GAME_WIDTH - halfviewX, winner->rect.getPosition().y);
     }
-    
+
     // Y Axis
     if (winner->rect.getPosition().y < halfviewY) {
         winner->rect.setPosition(winner->rect.getPosition().x, halfviewY);
@@ -385,7 +403,7 @@ void Game::EndRound() {
         ++i;
         ++iter;
     }
-    window.setView(game_view);    
+    window.setView(game_view);
 }
 
 GameObjectManager Game::_game_object_manager;

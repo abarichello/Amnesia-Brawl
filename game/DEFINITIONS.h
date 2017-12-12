@@ -23,6 +23,7 @@ static const float ROUND_TIME = 180.f;
 // BACKGROUNDS
 #define AMNESIA_LOGO          "media/textures/amnesia.png"
 #define DESERT_TEXTURE        "media/textures/desert.png"
+#define CONTROLS_TEXTURE      "media/textures/controls.png"
 
 #define ACAI_TEXTURE          "media/textures/acai.png"
 #define BEER_TEXTURE          "media/textures/beer.png"

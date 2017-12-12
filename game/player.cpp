@@ -29,10 +29,6 @@ Player::Player() {
     rectB.setFillColor(sf::Color::White);
 }
 
-Player::~Player() {
-    // body->GetWorld()->DestroyBody(body);
-}
-
 void Player::Draw(sf::RenderWindow& window) {
     // window.draw(rect); // DEBUG
     // window.draw(rectA);

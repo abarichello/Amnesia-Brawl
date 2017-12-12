@@ -7,7 +7,6 @@
 class Player : public Entity {
 public:
     Player();
-    ~Player();
     void Draw(sf::RenderWindow& window);
     void Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array);
     void Respawn();
