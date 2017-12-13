@@ -69,6 +69,7 @@ void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
 void PowerUp::Immunity(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
     iter->second->sprite.setTexture(iter->second->immune_texture);
+    iter->second->fixturedef.density = 9;
 }
 
 void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator& iter) {
@@ -90,6 +91,7 @@ void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator
     iter->second->rectB.setOrigin(iter->second->rectB.getLocalBounds().width / 2, iter->second->rectB.getLocalBounds().height / 2);
     iter->second->max_speed = 9.f;
     iter->second->fixturedef.friction = 3.f;
+    iter->second->fixturedef.density = 1;
 
     // Reset sprite to default
     iter->second->sprite.setTexture(iter->second->default_texture);
