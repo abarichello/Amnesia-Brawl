@@ -12,9 +12,8 @@ public:
     void Draw(sf::RenderWindow& window);
     void Draw(sf::RenderTexture& texture);
 
-    void CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground, sf::Texture& texture, sf::Color color);
-    void CreateAngledWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground, size_t angle, float friction, sf::Texture& texture, sf::Color color);
-    void CreateSpring(int posX, int posY, size_t angle);
+    void CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, bool is_ground, size_t angle, float friction, sf::Texture& texture, sf::Color color, b2BodyType type);
+    void CreateSpring(int posX, int posY, size_t angle, sf::Texture texture);
     void DrawSprings(sf::RenderWindow& window);
 
     float win_screen_countdown = 7.f;
