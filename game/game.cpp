@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game():
-    window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL"),
+    window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL", sf::Style::Fullscreen),
     game_view(sf::FloatRect(0, 0, GAME_WIDTH, GAME_HEIGHT)),
     gravity(0.f, 18.f),
     world(gravity) {
@@ -30,7 +30,6 @@ void Game::Start() {
                 } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
                     levelselect = new class LevelSelect();
                     mode_select = new class ModeSelect();
-                    delete title_screen;
                     game_state = GameState::STATE_MODE_SELECT;
                 }
 
@@ -233,7 +232,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
             if (map->win_screen_countdown <= 0) {
                 window.setView(game_view);
                 EndRound();
-                game_state = GameState::STATE_MODE_SELECT;
+                game_state = GameState::STATE_TITLE;
             }
         }
     }
