@@ -11,7 +11,9 @@ public:
 
     void Update(std::map<std::size_t, Player*>::const_iterator &iter, sf::Time elapsed_time);
     void Draw(sf::RenderWindow& window);
-    sf::RectangleShape dest_rec; // debug rect that indicates destination
+
+    sf::Texture tpad_texture;
+    sf::Sprite tpad_sprite;
 
 private:
     b2Vec2 destination;

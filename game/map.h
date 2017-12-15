@@ -41,6 +41,7 @@ private:
     sf::Texture desert_block_texture;
     sf::Texture fog_texture;
     sf::Texture spring_texture;
+    sf::Texture teleport_texture;
 
     sf::Sprite background_sprite;
     sf::Sprite amnesia_logo;

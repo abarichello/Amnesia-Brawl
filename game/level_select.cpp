@@ -33,7 +33,7 @@ LevelSelect::LevelSelect() {
     level2.setFont(banksia);
     level2.setFillColor(sf::Color::Black);
     level2.setCharacterSize(35);
-    level2.setString("Level 2 - ");
+    level2.setString("Level 2 - Absinto Factory");
     level2.setPosition(GAME_WIDTH / 14, GAME_HEIGHT / 3 + level2.getLocalBounds().height);
 
     level3.setFont(banksia);

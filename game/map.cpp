@@ -21,6 +21,9 @@ Map::Map(std::size_t level_number, b2World& world) {
     if (!package_texture.loadFromFile(PACKAGE_TEXTURE)) {
         std::cout << "Error loading package texture" << "\n";
     }
+    if (!teleport_texture.loadFromFile(TELEPORT_TEXTURE)) {
+        std::cout << "Error loading arrow texture" << "\n";
+    }
 
     amnesia_texture.setSmooth(true);
     amnesia_logo.setTexture(amnesia_texture);
@@ -55,6 +58,12 @@ Map::~Map() {
     for (auto wall : obstacle_array) {
         obstacle_array.pop_back();
         wall.body->GetWorld()->DestroyBody(wall.body);
+    }
+    for (auto spr : spring_array) {
+        spring_array.pop_back();
+    }
+    for (auto tp : tpad_array) {
+        tpad_array.pop_back();
     }
 }
 
@@ -122,7 +131,7 @@ void Map::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, b
 
 void Map::CreateSpring(int posX, int posY, size_t angle, sf::Color color = sf::Color::White) {
     Spring spring;
-    spring.rect.setPosition(sf::Vector2f(posX, posY - spring.rect.getLocalBounds().height)); // PosY minus the spring height
+    spring.rect.setPosition(sf::Vector2f(posX, posY));
     spring.rect.setRotation(angle);
     spring.sprite.setTexture(spring_texture);
     spring.sprite.setColor(color);
@@ -132,7 +141,8 @@ void Map::CreateSpring(int posX, int posY, size_t angle, sf::Color color = sf::C
 void Map::CreateTeleport(int posX, int posY, b2Vec2 destination, sf::Color color = sf::Color::White) {
     TeleportPad tpad;
     tpad.SetDestination(destination);
-    tpad.rect.setPosition(sf::Vector2f(posX, posY - tpad.rect.getLocalBounds().height)); // PosY minus tpad height
+    tpad.rect.setPosition(sf::Vector2f(posX, posY));
+    tpad.sprite.setTexture(teleport_texture);
     tpad.sprite.setColor(color);
     tpad_array.push_back(tpad);
 }
@@ -181,7 +191,7 @@ void Map::LoadLevel1(b2World& world) {
     CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f, neon_texture, color); // Fat lower left platform
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f, neon_texture, color); // Upper right angled border
  
-    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/18, 0);
+    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/11, 0);
 
     GenerateBorders(world, fog_texture);
 }
@@ -212,20 +222,20 @@ void Map::LoadLevel2(b2World& world) {
     //         World                        posX    posY                  sizeX                  sizeY   grnd   angle friction
     // Falling obstacle boxes
     for (auto i = 0u; i < 4; ++i) {
-        CreateWall(world, GAME_WIDTH / 2 - GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
+        CreateWall(world, GAME_WIDTH / 2 - GAME_WIDTH/9, 0, 30 + GenerateRandom(25), 30 + GenerateRandom(25), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
     }
     for (auto j = 0u; j < 4; ++j) {
-        CreateWall(world, GAME_WIDTH / 2 + GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
+        CreateWall(world, GAME_WIDTH / 2 + GAME_WIDTH/9, 0, 30 + GenerateRandom(25), 30 + GenerateRandom(25), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
     }
 
     // Create other objects
-    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/28,   5);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/28, 355);
+    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/15,   5);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/15, 355);
     //                                  posX                          posY                               destination
-    CreateTeleport(             GAME_WIDTH/50,               GAME_HEIGHT/3, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper left teleport
-    CreateTeleport(GAME_WIDTH - GAME_WIDTH/50,               GAME_HEIGHT/3,              b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper right teleport
-    CreateTeleport(             GAME_WIDTH/50, GAME_HEIGHT - GAME_HEIGHT/9, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/4)/ SCALE)); // Lower left teleport
-    CreateTeleport(GAME_WIDTH - GAME_WIDTH/50, GAME_HEIGHT - GAME_HEIGHT/9,              b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/4)/ SCALE)); // Lower right teleport
+    CreateTeleport(             GAME_WIDTH/80,               GAME_HEIGHT/5, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/5)/ SCALE)); // Upper left teleport
+    CreateTeleport(GAME_WIDTH - GAME_WIDTH/80,               GAME_HEIGHT/5, b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper right teleport
+    CreateTeleport(             GAME_WIDTH/80, GAME_HEIGHT - GAME_HEIGHT/7, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/7)/ SCALE)); // Lower left teleport
+    CreateTeleport(GAME_WIDTH - GAME_WIDTH/80, GAME_HEIGHT - GAME_HEIGHT/7, b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/7)/ SCALE)); // Lower right teleport
 
     // Boundaries
     //         World                         posX             posY           sizeX           sizeY  ground? angle friction
@@ -262,6 +272,6 @@ void Map::LoadLevel3(b2World& world) {
     CreateWall(world,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 2.f, desert_block_texture, color2); // Lower left rectangle
     CreateWall(world, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 2.f, desert_block_texture, color2); // Lower right rectangle
 
-    CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 10);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 350);
+    CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/5.5f, 10);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/5.5f, 350);
 }

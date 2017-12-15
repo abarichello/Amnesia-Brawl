@@ -20,7 +20,7 @@ static const float ROUND_TIME = 180.f;
 #define FOG_TEXTURE           "media/textures/fog.png"
 #define SPRING_TEXTURE        "media/textures/spring.png"
 #define PACKAGE_TEXTURE       "media/textures/package.png"
-#define ARROW_TEXTURE         "media/textures/arrow.png"
+#define TELEPORT_TEXTURE      "media/textures/teleport.png"
 
 // BACKGROUNDS
 #define AMNESIA_LOGO          "media/textures/amnesia.png"
