@@ -83,7 +83,7 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_PLAY;
                 } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
-                    game_state = GameState::STATE_MODE_SELECT;
+                    game_state = GameState::STATE_LEVEL_SELECT;
                     EndRound();
                 }
 
@@ -124,6 +124,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
     window.clear();
 
     // Draw map
+    map->Update();
     map->Draw(window);
 
     // Update players
@@ -142,6 +143,16 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
         for (auto spring : map->spring_array) {
             spring.Update(itr, elapsed_time);
             spring.Draw(window);
+        }
+        ++itr;
+    }
+
+    // Update teleport pads
+    itr = _game_object_manager._game_objects.begin();
+    while (itr != _game_object_manager._game_objects.end()) {
+        for (auto tp : map->tpad_array) {
+            tp.Update(itr, elapsed_time);
+            tp.Draw(window);
         }
         ++itr;
     }
@@ -403,6 +414,11 @@ void Game::EndRound() {
         ++iter;
     }
     window.setView(game_view);
+
+    // Delete powerups
+    for (auto pwup : powerup_array) {
+        powerup_array.pop_back();
+    }
 }
 
 GameObjectManager Game::_game_object_manager;

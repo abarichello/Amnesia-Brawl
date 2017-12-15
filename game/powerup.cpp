@@ -58,7 +58,6 @@ void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->rectB.setOrigin(sf::Vector2f(35, 100));
     iter->second->fixturedef.friction = 9.f;
     iter->second->max_speed = 4.f;
-
     iter->second->sprite.setTexture(iter->second->inverted_texture);
 }
 

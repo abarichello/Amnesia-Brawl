@@ -59,7 +59,7 @@ void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float cou
         seconds = "0" + seconds;
     }
 
-    if (countdown < 0) {
+    if (countdown <= 0) {
         match_clock.setString("-END-");
     } else {
         match_clock.setString(minutes + ":" + seconds);

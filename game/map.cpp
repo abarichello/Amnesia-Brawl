@@ -18,6 +18,9 @@ Map::Map(std::size_t level_number, b2World& world) {
     if (!amnesia_texture.loadFromFile(AMNESIA_LOGO)) {
         std::cout << "Error loading amnesia logo" << "\n";
     }
+    if (!package_texture.loadFromFile(PACKAGE_TEXTURE)) {
+        std::cout << "Error loading package texture" << "\n";
+    }
 
     amnesia_texture.setSmooth(true);
     amnesia_logo.setTexture(amnesia_texture);
@@ -30,6 +33,8 @@ Map::Map(std::size_t level_number, b2World& world) {
     desert_block_texture.setRepeated(true);
     fog_texture.setRepeated(true);
     fog_texture.setSmooth(true);
+    package_texture.setRepeated(true);
+    package_texture.setSmooth(true);
 
     this->level_number = level_number;
 
@@ -53,6 +58,26 @@ Map::~Map() {
     }
 }
 
+void Map::Update() {
+    for (auto wall : obstacle_array) {
+        // Teleport walls outside map (falling boxes)
+        if (wall.body->GetPosition().y * SCALE > GAME_HEIGHT + 200) {
+            wall.body->SetLinearVelocity(b2Vec2(0, 0));
+            if (RandomBool()) { // Randomize left or right spawn
+                wall.body->SetTransform(b2Vec2((GAME_WIDTH / 2 - GAME_WIDTH/9 - GenerateRandom(150)) / SCALE, -20 / SCALE), 0);
+            } else {
+                wall.body->SetTransform(b2Vec2((GAME_WIDTH / 2 + GAME_WIDTH/9 + GenerateRandom(150)) / SCALE, 0), -20 / SCALE);
+            }
+        }
+    }
+
+    // Pulse background color
+    if (level_number == 1) {
+        pulse_variable += 1;
+        background_sprite.setColor(sf::Color(pulse_variable, pulse_variable, pulse_variable));
+    }
+}
+
 void Map::Draw(sf::RenderWindow& window) {
     window.draw(background_sprite);
     window.draw(amnesia_logo);
@@ -60,23 +85,7 @@ void Map::Draw(sf::RenderWindow& window) {
         // Sprite drawing
         wall.sprite.setPosition(SCALE * wall.body->GetPosition().x, SCALE * wall.body->GetPosition().y);
         wall.sprite.setRotation(wall.body->GetAngle() * 180 / b2_pi);
-        
-        // Teleport walls outside map (falling boxes)
-        if (wall.body->GetPosition().y * SCALE > GAME_HEIGHT + 200) {
-            wall.body->SetLinearVelocity(b2Vec2(0, 0));
-            if (RandomBool()) { // Randomize left or right spawn
-                wall.body->SetTransform(b2Vec2((GAME_WIDTH / 2 - GAME_WIDTH/9 - GenerateRandom(100)) / SCALE, 0), 0);
-            } else {
-                wall.body->SetTransform(b2Vec2((GAME_WIDTH / 2 + GAME_WIDTH/9 + GenerateRandom(100)) / SCALE, 0), 0);
-            }
-        }
         window.draw(wall.sprite);
-    }
-
-    // Pulse background color
-    if (level_number == 1) {
-        pulse_variable += 1;
-        background_sprite.setColor(sf::Color(pulse_variable, pulse_variable, pulse_variable));
     }
 }
 
@@ -96,7 +105,7 @@ void Map::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, b
     bodydef.angle = angle * 0.01745329f; // Degree to radians
     wall.fixturedef.shape = &wall.shape;
     wall.fixturedef.friction = friction;
-    wall.fixturedef.density = 20;
+    wall.fixturedef.density = 30;
     wall.shape.SetAsBox(wall.rect.getLocalBounds().width / 2 / SCALE, wall.rect.getLocalBounds().height / 2 / SCALE);
 
     // Create physics body
@@ -111,20 +120,21 @@ void Map::CreateWall(b2World& world, int posX, int posY, int sizeX, int sizeY, b
     obstacle_array.push_back(wall);
 }
 
-void Map::CreateSpring(int posX, int posY, size_t angle, sf::Texture texture) {
+void Map::CreateSpring(int posX, int posY, size_t angle, sf::Color color = sf::Color::White) {
     Spring spring;
     spring.rect.setPosition(sf::Vector2f(posX, posY - spring.rect.getLocalBounds().height)); // PosY minus the spring height
     spring.rect.setRotation(angle);
-    spring.sprite.setTexture(texture);
-    spring.sprite.setOrigin(spring.rect.getLocalBounds().width / 2, spring.rect.getLocalBounds().height / 2);
-    spring.sprite.setTextureRect(sf::IntRect(0, 0, spring.rect.getLocalBounds().width, spring.rect.getLocalBounds().height));
+    spring.sprite.setTexture(spring_texture);
+    spring.sprite.setColor(color);
     spring_array.push_back(spring);
 }
 
-void Map::DrawSprings(sf::RenderWindow& window) {
-    for (auto spring : spring_array) {
-        window.draw(spring.rect);
-    }
+void Map::CreateTeleport(int posX, int posY, b2Vec2 destination, sf::Color color = sf::Color::White) {
+    TeleportPad tpad;
+    tpad.SetDestination(destination);
+    tpad.rect.setPosition(sf::Vector2f(posX, posY - tpad.rect.getLocalBounds().height)); // PosY minus tpad height
+    tpad.sprite.setColor(color);
+    tpad_array.push_back(tpad);
 }
 
 void Map::GenerateBorders(b2World& world, sf::Texture& texture) {
@@ -171,7 +181,7 @@ void Map::LoadLevel1(b2World& world) {
     CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f, neon_texture, color); // Fat lower left platform
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f, neon_texture, color); // Upper right angled border
  
-    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/18, 0, spring_texture);
+    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/18, 0);
 
     GenerateBorders(world, fog_texture);
 }
@@ -190,30 +200,36 @@ void Map::LoadLevel2(b2World& world) {
     background_sprite.setTexture(background_texture);
 
     //         World                        posX                            posY          sizeX           sizeY   grnd   angle friction
-    CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/4,                 GAME_HEIGHT/2,  GAME_WIDTH/4, GAME_HEIGHT/33,  true,  200, 0.1f, neon_texture, sf::Color::White); // Middle left wall
-    CreateWall(world, GAME_WIDTH/2 + GAME_WIDTH/4,                 GAME_HEIGHT/2,  GAME_WIDTH/4, GAME_HEIGHT/33,  true,  340, 0.1f, neon_texture, sf::Color::White); // Middle right wall
+    CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/35,  true,  200, 0.1f, neon_texture, sf::Color::White); // Middle left wall
+    CreateWall(world, GAME_WIDTH/2 + GAME_WIDTH/4, GAME_HEIGHT/2 + GAME_HEIGHT/10,  GAME_WIDTH/5, GAME_HEIGHT/35,  true,  340, 0.1f, neon_texture, sf::Color::White); // Middle right wall
 
-    //               World                    posX                            posY          sizeX           sizeY grnd   angle friction
-    CreateWall(world,   GAME_WIDTH/2 - GAME_WIDTH/6,               GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true, 200, 1.f, neon_texture, sf::Color::Red); // Top left wall platform
-    CreateWall(world,   GAME_WIDTH/2 + GAME_WIDTH/6,               GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true, 340, 1.f, neon_texture, sf::Color::Red); // Top right wall platform
-    CreateWall(world,                 GAME_WIDTH/20, GAME_HEIGHT - GAME_HEIGHT/5, GAME_WIDTH/10, GAME_HEIGHT/45, true, 200, 1.f, neon_texture, sf::Color::Red); // Left wall platform
-    CreateWall(world,   GAME_WIDTH -  GAME_WIDTH/20, GAME_HEIGHT - GAME_HEIGHT/5, GAME_WIDTH/10, GAME_HEIGHT/45, true, 340, 1.f, neon_texture, sf::Color::Red); // Right wall platform
+    //               World                    posX            posY          sizeX           sizeY grnd   angle friction
+    CreateWall(world,   GAME_WIDTH/2 - GAME_WIDTH/6, GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true, 200, 1.f, neon_texture, sf::Color::Red); // Top left wall platform (object collector)
+    CreateWall(world,   GAME_WIDTH/2 + GAME_WIDTH/6, GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true, 340, 1.f, neon_texture, sf::Color::Red); // Top right wall platform (object collector)
+    CreateWall(world,                 GAME_WIDTH/20, GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true,   3, 1.f, neon_texture, sf::Color::Red); // Middle wall platform
+    CreateWall(world,   GAME_WIDTH -  GAME_WIDTH/20, GAME_HEIGHT/3, GAME_WIDTH/10, GAME_HEIGHT/45, true, 357, 1.f, neon_texture, sf::Color::Red); // Middle wall platform
 
     //         World                        posX    posY                  sizeX                  sizeY   grnd   angle friction
     // Falling obstacle boxes
-    for (auto i = 0u; i < 3; ++i) {
-        CreateWall(world, GAME_WIDTH / 2 - GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), false, 45, 0.1f, fog_texture, sf::Color::Yellow, b2_dynamicBody);
+    for (auto i = 0u; i < 4; ++i) {
+        CreateWall(world, GAME_WIDTH / 2 - GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
     }
-    for (auto j = 0u; j < 3; ++j) {
-        CreateWall(world, GAME_WIDTH / 2 + GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), false, 45, 0.1f, fog_texture, sf::Color::Yellow, b2_dynamicBody);
+    for (auto j = 0u; j < 4; ++j) {
+        CreateWall(world, GAME_WIDTH / 2 + GAME_WIDTH/9, 0, 20 + GenerateRandom(40), 20 + GenerateRandom(40), true, GenerateRandom(365), 0.1f, package_texture, sf::Color::White, b2_dynamicBody);
     }
 
-    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/6, 0, spring_texture);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/6, 0, spring_texture);
+    // Create other objects
+    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/28,   5);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/28, 355);
+    //                                  posX                          posY                               destination
+    CreateTeleport(             GAME_WIDTH/50,               GAME_HEIGHT/3, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper left teleport
+    CreateTeleport(GAME_WIDTH - GAME_WIDTH/50,               GAME_HEIGHT/3,              b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper right teleport
+    CreateTeleport(             GAME_WIDTH/50, GAME_HEIGHT - GAME_HEIGHT/9, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/4)/ SCALE)); // Lower left teleport
+    CreateTeleport(GAME_WIDTH - GAME_WIDTH/50, GAME_HEIGHT - GAME_HEIGHT/9,              b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT - GAME_HEIGHT/4)/ SCALE)); // Lower right teleport
 
     // Boundaries
     //         World                         posX             posY           sizeX           sizeY  ground? angle friction
-    CreateWall(world,                GAME_WIDTH/2,           -40,    GAME_WIDTH,  GAME_HEIGHT/40, false, 0, 1.f, fog_texture); // Ceiling Shield
+    CreateWall(world,                GAME_WIDTH/2,           -45,    GAME_WIDTH,  GAME_HEIGHT/40, false, 0, 1.f, fog_texture); // Ceiling Shield
     CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,             0,  GAME_WIDTH/6,  GAME_HEIGHT/40, false, 0, 1.f, fog_texture); // Ceiling left
     CreateWall(world,                GAME_WIDTH/2,             0,  GAME_WIDTH/6,  GAME_HEIGHT/40, false, 0, 1.f, fog_texture); // Ceiling middle
     CreateWall(world, GAME_WIDTH/2 + GAME_WIDTH/3,             0,  GAME_WIDTH/6,  GAME_HEIGHT/40, false, 0, 1.f, fog_texture); // Ceiling right
@@ -222,7 +238,7 @@ void Map::LoadLevel2(b2World& world) {
     CreateWall(world, GAME_WIDTH/2 + GAME_WIDTH/3, GAME_HEIGHT-5,  GAME_WIDTH/3,  GAME_HEIGHT/20,  true, 355, 0.05f, fog_texture); // Ground right
 
     CreateWall(world,                           0, GAME_HEIGHT/2, GAME_WIDTH/40,     GAME_HEIGHT, false, 0, 1.f, fog_texture); // Left wall
-    CreateWall(world,                  GAME_WIDTH, GAME_HEIGHT/2, GAME_WIDTH/40,     GAME_HEIGHT, false, 0, 1.f, fog_texture);  // Right wall
+    CreateWall(world,                  GAME_WIDTH, GAME_HEIGHT/2, GAME_WIDTH/40,     GAME_HEIGHT, false, 0, 1.f, fog_texture); // Right wall
 }
 
 // TEQUILA DESERT
@@ -246,6 +262,6 @@ void Map::LoadLevel3(b2World& world) {
     CreateWall(world,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 2.f, desert_block_texture, color2); // Lower left rectangle
     CreateWall(world, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 2.f, desert_block_texture, color2); // Lower right rectangle
 
-    CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 10, spring_texture);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 350, spring_texture);
+    CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 10);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/7, 350);
 }
