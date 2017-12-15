@@ -12,7 +12,7 @@ LevelSelect::LevelSelect() {
     }
     
     control_shape.setTexture(&controls_texture);
-    control_shape.setSize(sf::Vector2f(400, 277));
+    control_shape.setSize(sf::Vector2f(control_shape.getTexture()->getSize().x, control_shape.getTexture()->getSize().y));
     control_shape.setPosition(GAME_WIDTH - control_shape.getLocalBounds().width, GAME_HEIGHT/2 - control_shape.getLocalBounds().height/2);
 
     level_select.setFont(arial);

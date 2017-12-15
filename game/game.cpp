@@ -13,7 +13,7 @@ void Game::Start() {
     // window.setVerticalSyncEnabled(true);
 
     float countdown = ROUND_TIME; // Round duration
-    sf::Clock powerup_clock;
+    Timer powerup_clock;
 
     // Main game loop
     while (window.isOpen()) {
@@ -35,18 +35,19 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_MODE_SELECT) {
 
+                std::cout << mode_select->selection << "\n";
                 if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
                     title_screen = new class TitleScreen();
                     game_state = GameState::STATE_TITLE;
                     delete levelselect;
                     delete mode_select;
                 }
-                // Left and Down D-pad
-                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) || sf::Joystick::isButtonPressed(0, 11) || sf::Joystick::isButtonPressed(0, 13)) {
+                // Down D-pad
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) || sf::Joystick::isButtonPressed(0, 13)) {
                     mode_select->selection += 1;
                 }
-                // Right and Up D-Pad
-                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) || sf::Joystick::isButtonPressed(0, 12) || sf::Joystick::isButtonPressed(0, 14)) {
+                // Up D-Pad
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) || sf::Joystick::isButtonPressed(0, 14)) {
                     mode_select->selection -= 1;
                 }
                 if (((event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) || sf::Joystick::isButtonPressed(0, 0))) {
@@ -55,7 +56,7 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_LEVEL_SELECT) {
 
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
                     game_state = GameState::STATE_MODE_SELECT;
                 }
                 if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) || sf::Joystick::isButtonPressed(0, 11) || sf::Joystick::isButtonPressed(0, 13)) {
@@ -66,7 +67,7 @@ void Game::Start() {
                 }
                 if (((event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) || sf::Joystick::isButtonPressed(0, 0))) {
                     global_clock.restart(); // Restart main clock
-                    powerup_clock.restart(); // Restart powerup clock
+                    powerup_clock.Start(); // Start powerup clock
                     CreateRound(mode_select->selection % 4 + 2, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                     game_state = GameState::STATE_PLAY;
@@ -76,8 +77,6 @@ void Game::Start() {
 
                 // Start - pauses
                 if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 7)) {
-                    // game_state = GameState::STATE_MODE_SELECT;
-                    // EndRound(); // DEBUG
                     game_state = GameState::STATE_PAUSE;
                 }
 
@@ -85,6 +84,7 @@ void Game::Start() {
 
                 // Start - unpauses
                 if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 7)) {
+                    powerup_clock.Start(); // Unpause powerup clock
                     game_state = GameState::STATE_PLAY;
                 // Select/back Quits
                 } else if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) || sf::Joystick::isButtonPressed(0, 6)) {
@@ -112,15 +112,15 @@ void Game::Start() {
             }
             case STATE_PAUSE:
                 global_clock.restart(); // Restart main clock
-                powerup_clock = powerup_clock; // Pause powerup clock
                 sf::Time pause_time = sf::seconds(0); // Freeze time
+                powerup_clock.Pause();
                 GameLoop(pause_time, countdown, powerup_clock);
                 break;
         }
     }
 }
 
-void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_clock) {
+void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_clock) {
     // GAME LOOP
     // Delta time between frames
     countdown -= elapsed_time.asSeconds();
@@ -178,14 +178,14 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
     }
 
     // Powerup generation
-    if (powerup_clock.getElapsedTime().asSeconds() > 7.f && powerup_array.size() == 0 && countdown > 0) {
-        powerup_clock.restart();
+    if (powerup_clock.GetElapsedSeconds() > 7.f && powerup_array.size() == 0 && countdown > 0) {
+        powerup_clock.Reset();
         PowerUp powerup;
         powerup.rect.setPosition(50 + GenerateRandom(GAME_WIDTH - 70), 50 + GenerateRandom(GAME_HEIGHT - 70));
         powerup_array.push_back(powerup);
         ResetPowerups();
-    } else if (powerup_array.size() == 1 && powerup_clock.getElapsedTime().asSeconds() > 10.f) { // Clean not picked up powerups
-        powerup_clock.restart();
+    } else if (powerup_array.size() == 1 && powerup_clock.GetElapsedSeconds() > 10.f) { // Clean not picked up powerups
+        powerup_clock.Reset();
         powerup_array.pop_back();
     }
 
@@ -228,7 +228,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
                         break;
                 }
                 iter2->alive = false;
-                powerup_clock.restart();
+                powerup_clock.Reset();
             }
             ++iter2;
         }
@@ -326,7 +326,7 @@ void Game::LoadResources() {
     amnesia_dark_red = sf::Color(158, 0, 0);
 
     control_shape.setTexture(&control_texture);
-    control_shape.setSize(sf::Vector2f(400, 277));
+    control_shape.setSize(sf::Vector2f(control_shape.getTexture()->getSize().x, control_shape.getTexture()->getSize().y));
     control_shape.setPosition(GAME_WIDTH - control_shape.getLocalBounds().width, GAME_HEIGHT/2 - control_shape.getLocalBounds().height/2);
 
     background_music.openFromFile(BACKGROUND_SONG);

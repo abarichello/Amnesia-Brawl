@@ -10,6 +10,7 @@
 #include "title_screen.h"
 #include "level_select.h"
 #include "mode_select.h"
+#include "timer.h"
 
 #include <utility>
 
@@ -26,7 +27,7 @@ public:
     void TitleScreen();
     void ModeSelect();
     void LevelSelect();
-    void GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_clock);
+    void GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_clock);
 
     void WinnerCheck();
     void ResetPowerups();
