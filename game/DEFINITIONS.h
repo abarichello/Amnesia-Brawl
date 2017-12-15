@@ -1,6 +1,8 @@
 static const int GAME_WIDTH  = 1366;
 static const int GAME_HEIGHT = 768;
 
+static const int CONTROLLER_THRESHOLD = 25;
+
 // SFML uses pixels as coordinates while Box2D uses meters, this scale constant
 // is used to convert between these two systems.
 static const float SCALE = 30;

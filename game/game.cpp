@@ -25,9 +25,9 @@ void Game::Start() {
 
             if (game_state == GameState::STATE_TITLE) {
 
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
                     window.close();
-                } else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+                } else if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) || sf::Joystick::isButtonPressed(0, 0)) {
                     levelselect = new class LevelSelect();
                     mode_select = new class ModeSelect();
                     game_state = GameState::STATE_MODE_SELECT;
@@ -35,19 +35,21 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_MODE_SELECT) {
 
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
                     title_screen = new class TitleScreen();
                     game_state = GameState::STATE_TITLE;
                     delete levelselect;
                     delete mode_select;
                 }
-                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
+                // Left and Down D-pad
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) || sf::Joystick::isButtonPressed(0, 11) || sf::Joystick::isButtonPressed(0, 13)) {
                     mode_select->selection += 1;
                 }
-                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
+                // Right and Up D-Pad
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) || sf::Joystick::isButtonPressed(0, 12) || sf::Joystick::isButtonPressed(0, 14)) {
                     mode_select->selection -= 1;
                 }
-                if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
+                if (((event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) || sf::Joystick::isButtonPressed(0, 0))) {
                     game_state = GameState::STATE_LEVEL_SELECT;
                 }
 
@@ -56,13 +58,13 @@ void Game::Start() {
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                     game_state = GameState::STATE_MODE_SELECT;
                 }
-                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) || sf::Joystick::isButtonPressed(0, 11) || sf::Joystick::isButtonPressed(0, 13)) {
                     levelselect->selection += 1;
                 }
-                if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
+                if ((event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) || sf::Joystick::isButtonPressed(0, 12) || sf::Joystick::isButtonPressed(0, 14)) {
                     levelselect->selection -= 1;
                 }
-                if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) {
+                if (((event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) || sf::Joystick::isButtonPressed(0, 0))) {
                     global_clock.restart(); // Restart main clock
                     powerup_clock.restart(); // Restart powerup clock
                     CreateRound(mode_select->selection % 4 + 2, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
@@ -72,7 +74,8 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_PLAY) {
 
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                // Start - pauses
+                if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 7)) {
                     // game_state = GameState::STATE_MODE_SELECT;
                     // EndRound(); // DEBUG
                     game_state = GameState::STATE_PAUSE;
@@ -80,9 +83,11 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_PAUSE) {
 
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+                // Start - unpauses
+                if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 7)) {
                     game_state = GameState::STATE_PLAY;
-                } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
+                // Select/back Quits
+                } else if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) || sf::Joystick::isButtonPressed(0, 6)) {
                     game_state = GameState::STATE_LEVEL_SELECT;
                     EndRound();
                 }
@@ -251,7 +256,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, sf::Clock& powerup_
     if (game_state == GameState::STATE_PAUSE) {
         window.draw(control_shape); // Pause menu
     }
-    
+
     window.display();
 }
 

@@ -55,15 +55,15 @@ void Player::Update(sf::Time elapsed_time, std::vector<Obstacle> &obstacle_array
     if (alive) {
         float move_amount = movement_speed * elapsed_time.asSeconds();
 
-        if (sf::Keyboard::isKeyPressed(left)) {
+        if ((sf::Keyboard::isKeyPressed(left) || sf::Joystick::isButtonPressed(number - 1, 11))) {
             body->SetLinearVelocity(b2Vec2(-move_amount, body->GetLinearVelocity().y));
         }
 
-        if (sf::Keyboard::isKeyPressed(right)) {
+        if ((sf::Keyboard::isKeyPressed(right) || sf::Joystick::isButtonPressed(number - 1, 12))) {
             body->SetLinearVelocity(b2Vec2(move_amount, body->GetLinearVelocity().y));
         }
 
-        if (sf::Keyboard::isKeyPressed(jump)) {
+        if ((sf::Keyboard::isKeyPressed(jump) || sf::Joystick::isButtonPressed(number - 1, 0))) {
             if (jumps_remaining > 0 && jump_clock.getElapsedTime().asSeconds() > 0.5f) {
                 jump_clock.restart();
                 --jumps_remaining;
