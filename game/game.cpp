@@ -35,7 +35,6 @@ void Game::Start() {
 
             } else if (game_state == GameState::STATE_MODE_SELECT) {
 
-                std::cout << mode_select->selection << "\n";
                 if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
                     title_screen = new class TitleScreen();
                     game_state = GameState::STATE_TITLE;
@@ -68,7 +67,7 @@ void Game::Start() {
                 if (((event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)) || sf::Joystick::isButtonPressed(0, 0))) {
                     global_clock.restart(); // Restart main clock
                     powerup_clock.Start(); // Start powerup clock
-                    CreateRound(mode_select->selection % 4 + 2, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
+                    CreateRound(mode_select->selection % 3 + 2, levelselect->selection % 3 + 1, world); // Number of players / Map number / world
                     countdown = ROUND_TIME;
                     game_state = GameState::STATE_PLAY;
                 }
