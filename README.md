@@ -11,6 +11,13 @@ Amnesia Brawl in single-screen platform fighting video game where you control Am
 
 # How to Play
 To play the game you can download the binaries on the 'Release', or compile it yourself using the Makefile provided, you also need to install the SFML and Box2D liraries to play.  
+### Linux
+1. Download the latest release in the 'Releases' tab located in this repository.
+2. Extract the zip file to your prefered location.
+3. Install the [SFML](https://www.sfml-dev.org/download.php) and [Box2](https://github.com/erincatto/Box2D) libraries from their respective websites (or through your favorite package manager).
+4. Execute the binary file.
+
+Alternatively you can clone the source code and compile the game using the Makefile provided, but you still have to download the libraries to run the game (not that complicated).  
 
 # Controls
 Game supports 2 to 4 players and currently has 3 maps.  
