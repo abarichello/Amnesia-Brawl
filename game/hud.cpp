@@ -48,7 +48,7 @@ HUD::HUD(std::size_t number_of_players) {
     winner_text.setString("PX WON"); // placeholder string
 }
 
-void HUD::Update(std::map<std::size_t, Player*>::const_iterator &iter, float countdown) {
+void HUD::Update(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator &iter, float countdown) {
     for (auto i = 0u; i < number_of_players; ++i) {
         score_array[i].setString(std::to_string(iter->second->score));
         ++iter;

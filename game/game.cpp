@@ -132,7 +132,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_cloc
     map->Draw(window);
 
     // Update players
-    std::map<std::size_t, Player*>::const_iterator itr = _game_object_manager._game_objects.begin();
+    std::map<std::size_t, std::shared_ptr<Player>>::const_iterator itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
         itr->second->rect.setPosition(SCALE * itr->second->body->GetPosition().x, SCALE * itr->second->body->GetPosition().y);
         itr->second->rect.setRotation(itr->second->body->GetAngle() * 180 / b2_pi);
@@ -162,9 +162,9 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_cloc
     }
 
     // Player-Player collision
-    std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+    std::map<std::size_t, std::shared_ptr<Player>>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end() && countdown > 0) { // Stop collisions after game ends
-        std::map<std::size_t, Player*>::const_iterator iter2 = _game_object_manager._game_objects.begin();
+        std::map<std::size_t, std::shared_ptr<Player>>::const_iterator iter2 = _game_object_manager._game_objects.begin();
         while (iter2 != _game_object_manager._game_objects.end()) {
             if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
                 iter->second->score += 1;
@@ -281,21 +281,21 @@ void Game::CreateRound(std::size_t players_num, std::size_t level_number, b2Worl
 
 void Game::LoadPlayers(std::size_t number_of_players) {
     // Create them again
-    player1 = new Player();
-    player2 = new Player();
+    player1 = std::make_shared<Player>();
+    player2 = std::make_shared<Player>();
     SpawnPlayer(1, player1, amnesia_blue, sf::Keyboard::Key::W, sf::Keyboard::Key::A, sf::Keyboard::Key::D);
     SpawnPlayer(2, player2, amnesia_red, sf::Keyboard::Key::Up, sf::Keyboard::Key::Left, sf::Keyboard::Key::Right);
     if (number_of_players > 2 && number_of_players < 5) {
-        player3 = new Player();
+        player3 = std::make_shared<Player>();
         SpawnPlayer(3, player3, amnesia_dark_blue, sf::Keyboard::Key::T, sf::Keyboard::Key::F, sf::Keyboard::Key::H);
         if (number_of_players == 4) {
-            player4 = new Player();
+            player4 = std::make_shared<Player>();
             SpawnPlayer(4, player4, amnesia_dark_red, sf::Keyboard::Key::I, sf::Keyboard::Key::J, sf::Keyboard::Key::L);
         }
     }
 }
 
-void Game::SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
+void Game::SpawnPlayer(std::size_t number, std::shared_ptr<Player> player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right) {
     // Player controls configurations
     player->number = number;
     player->jump = jump;
@@ -313,7 +313,7 @@ void Game::LoadResources() {
 
     // Default spawn locations
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/3, GAME_HEIGHT/3));
-    spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3, GAME_HEIGHT/3));
+    spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3 + 25, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
 
@@ -332,7 +332,7 @@ void Game::LoadResources() {
     background_music.play();
 }
 
-void Game::CreatePlayer(b2World& world, Player* player, int x, int y) {
+void Game::CreatePlayer(b2World& world, std::shared_ptr<Player> player, int x, int y) {
     // Creating physics body
     const float density = 1;
     player->bodydef.type = b2_dynamicBody;
@@ -393,7 +393,7 @@ void Game::WinnerCheck() {
 }
 
 void Game::ResetPowerups() {
-    std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+    std::map<std::size_t, std::shared_ptr<Player>>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
         if (iter->second->powered_up) {
             PowerUp::ResetPowerupEffects(iter);
@@ -410,7 +410,7 @@ void Game::EndRound() {
     auto i = 1;
 
     // Delete players physics bodies
-    std::map<std::size_t, Player*>::const_iterator iter = _game_object_manager._game_objects.begin();
+    std::map<std::size_t, std::shared_ptr<Player>>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
         iter->second->body->GetWorld()->DestroyBody(iter->second->body);
         _game_object_manager.Remove(i);

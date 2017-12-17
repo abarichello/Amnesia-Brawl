@@ -12,7 +12,7 @@ void TeleportPad::SetDestination(b2Vec2 destination) {
     this->destination = destination;
 }
 
-void TeleportPad::Update(std::map<std::size_t, Player*>::const_iterator &iter, sf::Time elapsed_time) {
+void TeleportPad::Update(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator &iter, sf::Time elapsed_time) {
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 

@@ -11,7 +11,7 @@ void Spring::Draw(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
-void Spring::Update(std::map<std::size_t, Player*>::const_iterator &iter, sf::Time elapsed_time) {
+void Spring::Update(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator &iter, sf::Time elapsed_time) {
     sprite.setPosition(rect.getPosition());
     sprite.setRotation(rect.getRotation());
 

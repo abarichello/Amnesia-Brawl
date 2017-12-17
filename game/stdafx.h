@@ -12,6 +12,7 @@
 
 #include <map>
 #include <iostream>
+#include <memory>
 #include <cassert>
 #include <cmath>
 #include <string>

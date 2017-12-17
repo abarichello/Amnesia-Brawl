@@ -21,8 +21,8 @@ public:
     void LoadResources();
     void CreateRound(std::size_t players_num, std::size_t level_number, b2World& world);
     void LoadPlayers(std::size_t number_of_players);
-    void SpawnPlayer(std::size_t number, Player* player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
-    void CreatePlayer(b2World& world, Player* player, int x, int y);
+    void SpawnPlayer(std::size_t number, std::shared_ptr<Player> player, sf::Color color, sf::Keyboard::Key jump, sf::Keyboard::Key left, sf::Keyboard::Key right);
+    void CreatePlayer(b2World& world, std::shared_ptr<Player> player, int x, int y);
 
     void TitleScreen();
     void ModeSelect();
@@ -55,10 +55,10 @@ public:
     class ModeSelect* mode_select;
     class LevelSelect* levelselect;
     
-    Player* player1;
-    Player* player2;
-    Player* player3;
-    Player* player4;
+    std::shared_ptr<Player> player1;
+    std::shared_ptr<Player> player2;
+    std::shared_ptr<Player> player3;
+    std::shared_ptr<Player> player4;
     Map* map;
     
     sf::Texture control_texture;

@@ -41,18 +41,18 @@ PowerUp::PowerUp() {
     sprite.setTextureRect(sf::IntRect(0, 0, rect.getLocalBounds().width, rect.getLocalBounds().height));
 }
 
-void PowerUp::Invisibility(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Invisibility(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     auto color = iter->second->sprite.getColor();
     color.a = 70;
     iter->second->sprite.setColor(color);
 }
 
-void PowerUp::Speed(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Speed(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     iter->second->max_speed = 30.f;
     iter->second->jump_impulse = 20.f;
 }
 
-void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Rage(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
     iter->second->rectB.setSize(sf::Vector2f(70, 110)); // Some magic numbers
     iter->second->rectB.setOrigin(sf::Vector2f(35, 100));
@@ -61,17 +61,17 @@ void PowerUp::Rage(std::map<std::size_t, Player*>::const_iterator& iter) {
     iter->second->sprite.setTexture(iter->second->inverted_texture);
 }
 
-void PowerUp::Floaty(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Floaty(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     iter->second->body->SetGravityScale(0.2f);
 }
 
-void PowerUp::Immunity(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::Immunity(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     iter->second->rectA.setSize(sf::Vector2f(0, 0));
     iter->second->sprite.setTexture(iter->second->immune_texture);
     iter->second->fixturedef.density = 9;
 }
 
-void PowerUp::ResetPowerupEffects(std::map<std::size_t, Player*>::const_iterator& iter) {
+void PowerUp::ResetPowerupEffects(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator& iter) {
     // Reset speed
     iter->second->max_speed = 10.f;
     iter->second->jump_impulse = 15.f;

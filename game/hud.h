@@ -6,7 +6,7 @@
 class HUD {
 public:
     HUD(std::size_t number_of_players);
-    void Update(std::map<std::size_t, Player*>::const_iterator &iter, float coundown);
+    void Update(std::map<std::size_t, std::shared_ptr<Player>>::const_iterator &iter, float coundown);
     void Draw(sf::RenderWindow& window);
     std::vector<sf::Text> score_array;
 
