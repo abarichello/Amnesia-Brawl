@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "entity.h"
 
+Entity::Entity() = default;
+
+Entity::~Entity() = default;
+
 void Entity::Load(std::string filename) {
     if(!texture.loadFromFile(filename)) {
         filename = "";

@@ -4,6 +4,9 @@
 
 class Entity {
 public:
+    Entity();
+    virtual ~Entity();
+
     void Load(std::string filename);
     void Draw(sf::RenderWindow& window);
     void Update(float elapsed_time);
