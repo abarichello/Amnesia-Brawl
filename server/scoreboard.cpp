@@ -7,7 +7,7 @@ void MakePacket(const wchar_t* action, const wchar_t* name, const float score, s
     JSONObject data;
     data[L"action"] = new JSONValue(action);
     data[L"name"] = new JSONValue(name);
-    data[L"score"] = new JSONValue(packet);
+    data[L"score"] = new JSONValue(score);
     
     JSONValue* val = new JSONValue(data);
     data.clear();
@@ -52,12 +52,12 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < scores.size(); ++i) {
                 JSONObject current_object = scores[i]->AsObject();
                 std::wcout << "Name: " << current_object[L"Name"]->AsString();
-                std::cout << "Highscore: " << current_object[L"Score"]->AsNumber() << "\n";
+                std::cout << " // Highscore: " << current_object[L"Score"]->AsNumber() << "\n";
             }
         }
         delete json_highscore;
     } else if (argc == 3) {
-        MakePacket(L"AddScore", std::wstring(argv[1], argv[1] + strlen(argv[1])).c_str(), atof(argv[2]), packet);
+        MakePacket(L"AddScore", std::wstring(argv[1], argv[1] + strlen(argv[1])).c_str(), std::atof(argv[2]), packet);
         if (socket.send(packet, ip, port) != sf::Socket::Done) {
             std::cout << "An error occurred while sending the packet" << "\n";
         }

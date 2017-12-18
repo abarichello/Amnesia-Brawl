@@ -32,7 +32,7 @@ server.on("message", function(msg, rinfo) {
    console.log(rinfo);
 
     if (rinfo.size != 4) {
-        console.log("Received message" + msg.toString());
+        console.log("Received message " + msg.toString());
         var jsonData, i;
 
         try {
@@ -44,7 +44,7 @@ server.on("message", function(msg, rinfo) {
 
         switch (jsonData.action) {
             case "AddScore":
-                console.log("AddScore called\n");
+                console.log("AddScore called...\n");
             
                 if (highscores != undefined) {
                     for (i = 0; i < highscores.Scores.length; ++i) {
@@ -68,7 +68,7 @@ server.on("message", function(msg, rinfo) {
                     if (err)
                         console.log("Error sending response");
                     else
-                        console.log("Responded to client at " + r.info.address + ":" + rinfo.port);
+                        console.log("Responded to client at " + rinfo.address + ":" + rinfo.port);
                 });
                 break;
         }
@@ -85,7 +85,7 @@ server.bind(9000);
 var web_server = require('http');
 web_server.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type': 'text/html'});
-    response.write("<html><body><h1>High Scores</h1><ul>");
+    response.write("<html><body><h1>Amnesia-Brawl Highscores</h1><ul>");
     for (i = 0; i < highscores.Scores.length; ++i) {
         response.write(highscores.Scores[i].Name + "&nbsp;&nbsp;" + highscores.Scores[i].Score + "<br />");
     }
