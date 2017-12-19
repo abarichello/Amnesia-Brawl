@@ -1,7 +1,7 @@
 static const int GAME_WIDTH  = 1366;
 static const int GAME_HEIGHT = 768;
 
-static const int CONTROLLER_THRESHOLD = 25;
+static const int CONTROLLER_THRESHOLD = 25; // Controller deadzone
 
 // SFML uses pixels as coordinates while Box2D uses meters, this scale constant
 // is used to convert between these two systems.
@@ -44,4 +44,8 @@ static const float ROUND_TIME = 180.f;
 #define BANKSIA_FONT          "media/fonts/banksia.ttf"
 
 // AUDIO
-#define BACKGROUND_SONG     "media/audio/fishing.wav"
+#define BACKGROUND_SONG1      "media/audio/background1.wav"
+#define BACKGROUND_SONG2      "media/audio/background2.wav"
+#define BACKGROUND_SONG3      "media/audio/background3.wav"
+#define SPRING_SOUND          "media/audio/spring.wav"
+#define SQUASH_SOUND          "media/audio/squash.ogg"

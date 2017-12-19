@@ -168,6 +168,8 @@ void Map::LoadLevel1(b2World& world) {
     }
     background_texture.loadFromImage(degrade);
     background_sprite.setTexture(background_texture);
+    background_music.openFromFile(BACKGROUND_SONG1);
+    background_music.play();
 
     // Platforms
     //         World                         posX                           posY          sizeX           sizeY  ground? angle friction
@@ -191,7 +193,7 @@ void Map::LoadLevel1(b2World& world) {
     CreateWall(world, GAME_WIDTH/2 - GAME_WIDTH/3,   GAME_HEIGHT - GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15,  true,   5, 5.f, neon_texture, color); // Fat lower left platform
     CreateWall(world,  GAME_WIDTH - GAME_WIDTH/20,                 GAME_HEIGHT/50,  GAME_WIDTH/2, GAME_HEIGHT/15, false,   8, 5.f, neon_texture, color); // Upper right angled border
  
-    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/11, 0);
+    CreateSpring(GAME_WIDTH/15, GAME_HEIGHT - GAME_HEIGHT/13, 5);
 
     GenerateBorders(world, fog_texture);
 }
@@ -229,8 +231,8 @@ void Map::LoadLevel2(b2World& world) {
     }
 
     // Create other objects
-    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/15,   5);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/15, 355);
+    CreateSpring(             GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/17,   5);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/9, GAME_HEIGHT - GAME_HEIGHT/17, 355);
     //                                  posX                          posY                               destination
     CreateTeleport(             GAME_WIDTH/80,               GAME_HEIGHT/5, b2Vec2((GAME_WIDTH - GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/5)/ SCALE)); // Upper left teleport
     CreateTeleport(GAME_WIDTH - GAME_WIDTH/80,               GAME_HEIGHT/5, b2Vec2((GAME_WIDTH/15) / SCALE, (GAME_HEIGHT/4)/ SCALE)); // Upper right teleport
@@ -272,6 +274,6 @@ void Map::LoadLevel3(b2World& world) {
     CreateWall(world,              GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true,  10, 2.f, desert_block_texture, color2); // Lower left rectangle
     CreateWall(world, GAME_WIDTH - GAME_WIDTH/10,   GAME_HEIGHT - GAME_HEIGHT/7,  GAME_WIDTH/6,  GAME_HEIGHT/35,  true, 350, 2.f, desert_block_texture, color2); // Lower right rectangle
 
-    CreateSpring(GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/5.5f, 10);
-    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/5.5f, 350);
+    CreateSpring(GAME_WIDTH/10,              GAME_HEIGHT - GAME_HEIGHT/6.5f,  10);
+    CreateSpring(GAME_WIDTH - GAME_WIDTH/10, GAME_HEIGHT - GAME_HEIGHT/6.5f, 350);
 }

@@ -32,8 +32,9 @@ private:
     void LoadLevel2(b2World& world);
     void LoadLevel3(b2World& world);
 
+    sf::Music background_music;
+    
     sf::Image degrade;
-
     sf::Texture background_texture;
     sf::Texture amnesia_texture;
     sf::Texture package_texture;

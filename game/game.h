@@ -68,8 +68,10 @@ public:
     sf::Color amnesia_dark_blue;
     sf::Color amnesia_dark_red;
 
-    sf::SoundBuffer sound_buffer;
-    sf::Music background_music;
+    sf::SoundBuffer spring_buffer;
+    sf::SoundBuffer squash_buffer;
+    sf::Sound spring_sound;
+    sf::Sound squash_sound;
 
     std::vector<PowerUp> powerup_array;
     std::vector<b2Vec2> spawn_locations;

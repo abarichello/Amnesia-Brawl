@@ -2,16 +2,17 @@
 
 Game::Game():
     window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL", sf::Style::Fullscreen),
-    game_view(sf::FloatRect(0, 0, GAME_WIDTH, GAME_HEIGHT)),
+    // window(sf::VideoMode().getDesktopMode(), "AMNESIA BRAWL"), // DEBUG, windowed mode
     gravity(0.f, 18.f),
     world(gravity) {
+    
+    game_view = sf::View(sf::FloatRect(0, 0, GAME_WIDTH, GAME_HEIGHT));
+    window.setView(game_view);
     LoadResources();
 }
 
 void Game::Start() {
     window.setFramerateLimit(80);
-    // window.setVerticalSyncEnabled(true);
-
     float countdown = ROUND_TIME; // Round duration
     Timer powerup_clock;
 
@@ -19,10 +20,17 @@ void Game::Start() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
+            // Resize events
+            if (event.type == sf::Event::Resized) {
+                sf::FloatRect visible_area(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visible_area));
+            }
+
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
 
+            // GameStates
             if (game_state == GameState::STATE_TITLE) {
 
                 if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) || sf::Joystick::isButtonPressed(0, 1)) {
@@ -145,7 +153,9 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_cloc
     itr = _game_object_manager._game_objects.begin();
     while (itr != _game_object_manager._game_objects.end()) {
         for (auto spring : map->spring_array) {
-            spring.Update(itr, elapsed_time);
+            if (spring.Update(itr, elapsed_time)) {
+                spring_sound.play();
+            }
             spring.Draw(window);
         }
         ++itr;
@@ -169,6 +179,7 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_cloc
             if (iter->second->rectB.getGlobalBounds().intersects(iter2->second->rectA.getGlobalBounds())) {
                 iter->second->score += 1;
                 iter->second->jumps_remaining = 1;
+                squash_sound.play();
                 iter2->second->Respawn();
             }
             ++iter2;
@@ -245,7 +256,6 @@ void Game::GameLoop(sf::Time elapsed_time, float& countdown, Timer& powerup_cloc
         if (map->win_screen_countdown > 0) {
             map->win_screen_countdown -= elapsed_time.asSeconds();
             if (map->win_screen_countdown <= 0) {
-                window.setView(game_view);
                 EndRound();
                 game_state = GameState::STATE_TITLE;
             }
@@ -310,26 +320,26 @@ void Game::LoadResources() {
     if (!control_texture.loadFromFile(CONTROLS_TEXTURE)) {
         std::cout << "Error loading controls texture" << "\n";
     }
-
     // Default spawn locations
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/3, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/3 + 25, GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
     spawn_locations.push_back(b2Vec2(GAME_WIDTH - GAME_WIDTH/6, GAME_HEIGHT - GAME_HEIGHT/3));
-
     title_screen = new class TitleScreen();
 
     amnesia_blue = sf::Color(14, 77, 203);
     amnesia_red = sf::Color(227, 12, 18);
     amnesia_dark_blue = sf::Color(29, 12, 137);
     amnesia_dark_red = sf::Color(158, 0, 0);
-
     control_shape.setTexture(&control_texture);
     control_shape.setSize(sf::Vector2f(control_shape.getTexture()->getSize().x, control_shape.getTexture()->getSize().y));
     control_shape.setPosition(GAME_WIDTH - control_shape.getLocalBounds().width, GAME_HEIGHT/2 - control_shape.getLocalBounds().height/2);
 
-    background_music.openFromFile(BACKGROUND_SONG);
-    background_music.play();
+    spring_buffer.loadFromFile(SPRING_SOUND);
+    spring_sound.setBuffer(spring_buffer);
+    spring_sound.setVolume(0.5f);
+    squash_buffer.loadFromFile(SQUASH_SOUND);
+    squash_sound.setBuffer(spring_buffer);
 }
 
 void Game::CreatePlayer(b2World& world, std::shared_ptr<Player> player, int x, int y) {
@@ -407,8 +417,8 @@ void Game::EndRound() {
     // Function called while exiting a round
     delete map;
     delete hud;
+    
     auto i = 1;
-
     // Delete players physics bodies
     std::map<std::size_t, std::shared_ptr<Player>>::const_iterator iter = _game_object_manager._game_objects.begin();
     while (iter != _game_object_manager._game_objects.end()) {
