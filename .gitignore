@@ -2,7 +2,6 @@ sfml
 amnesia
 score
 *.zip
-*.sh
 *.txt
 /game/media/audio/*
 
