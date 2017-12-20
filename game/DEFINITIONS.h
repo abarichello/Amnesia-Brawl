@@ -1,4 +1,4 @@
-static const int GAME_WIDTH  = 1366;
+static const int GAME_WIDTH = 1366;
 static const int GAME_HEIGHT = 768;
 
 static const int CONTROLLER_THRESHOLD = 25; // Controller deadzone

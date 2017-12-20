@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/ACNPePl.png" align="center">
+﻿<img src="https://i.imgur.com/ACNPePl.png" align="center">
 A local multiplayer game being developed to be played at the [Amnesia Open Bar](https://www.facebook.com/vaidaramnesia), UFSC's Computer Science party.
 
 # Intro
@@ -14,8 +14,17 @@ To play the game you can download the binaries on the 'Release', or compile it y
 ### Linux
 1. Download the latest release in the 'Releases' tab located in this repository.
 2. Extract the zip file to your prefered location.
-3. Install the [SFML](https://www.sfml-dev.org/download.php) and [Box2](https://github.com/erincatto/Box2D) libraries from their respective websites (or through your favorite package manager).
-4. Execute the binary file.
+3. Install the [SFML](https://www.sfml-dev.org/download.php) and [Box2D](https://github.com/erincatto/Box2D) libraries from their respective websites (or through your favorite package manager).  
+4. Download the audio files from this README and put the `audio` folder in `game/media`
+5. Execute the binary file.
+
+### Windows
+Currently under testing.  
+1. Follow the same steps as the linux instructions except for the libraries instalation.
+
+# Downloading the audio
+Audio files are too big for GitHub's low download speeds, so you can download them through [this link]().  
+After downloading the zip extract the `audio` folder to `game/media` folder.
 
 Alternatively you can clone the source code and compile the game using the Makefile provided, but you still have to download the libraries to run the game (not that complicated).  
 
@@ -33,3 +42,9 @@ The game currently has 5 powerups represented by the drinks served at the party:
     3.  RAGE MODE (Immunity + death on touch) - Vodka  
     4.  Float mode - Absinto  
     5.  Immunity - Beer  
+
+# Credits
+Assets taken from [opengameart.org](opengameart.org)
+Songs edited by me, taken from [freesound.org](freesound.org)
+- [Level 1](https://freesound.org/people/FoolBoyMedia/sounds/222066/)
+- [Level 2](https://freesound.org/people/frankum/sounds/384468/)
