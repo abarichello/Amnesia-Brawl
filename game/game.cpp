@@ -1,7 +1,7 @@
 #include "game.h"
 
 Game::Game() :
-	window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "AMNESIA BRAWL", sf::Style::Fullscreen),
+	window(sf::VideoMode().getDesktopMode(), "AMNESIA BRAWL", sf::Style::Fullscreen),
 	// window(sf::VideoMode().getDesktopMode(), "AMNESIA BRAWL"), // DEBUG, windowed mode
 	gravity(0.f, 18.f),
 	world(gravity) {
